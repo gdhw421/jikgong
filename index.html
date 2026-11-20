@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>직공 | 직거래 공동구매</title>
+<meta name="description" content="가격이 내려간 농산물을 산지에서 받아 아파트 이웃과 나누는 공동구매, 직공">
+<meta property="og:title" content="직공 | 직거래 공동구매">
+<meta property="og:description" content="가격이 내려간 농산물, 가치는 그대로 전해요.">
+<meta property="og:image" content="assets/harvest.jpg">
+<link rel="icon" href="assets/logo.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--green-950:#073c27;--green-900:#0c5334;--green-800:#176642;--green-100:#e5f0e7;--green-50:#f1f6ef;--cream:#faf7f0;--cream-dark:#f2ecdf;--sun:#ffb633;--ink:#14231b;--muted:#647168;--line:#dfe4dc;--white:#fff;font-family:"Noto Sans KR","Apple SD Gothic Neo",sans-serif;color:var(--ink);background:var(--cream);font-synthesis:none}
+html{scroll-behavior:smooth}
+*{box-sizing:border-box}
+body{margin:0;min-width:320px;background:var(--cream);color:var(--ink);word-break:keep-all}
+button,a{-webkit-tap-highlight-color:transparent}
+button{cursor:pointer;font-family:inherit}
+input,select,textarea{font-family:inherit}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+h1,h2,h3,p{margin:0}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.site-shell{overflow:hidden}
+.page-width{width:min(1180px,calc(100% - 48px));margin-inline:auto}
+.skip-link{position:fixed;left:16px;top:-80px;z-index:200;background:var(--ink);color:white;padding:12px 18px;border-radius:0 0 8px 8px}
+.skip-link:focus{top:0}
+.site-header{height:84px;background:rgba(250,247,240,.96);border-bottom:1px solid rgba(12,83,52,.12);position:relative;z-index:50}
+.header-inner{max-width:1280px;height:100%;margin:auto;padding:0 48px;display:flex;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.brand img{width:47px;height:47px;border-radius:50%;object-fit:cover}
+.brand span{color:var(--green-900);font-size:25px;font-weight:800;letter-spacing:-.05em}
+.brand small{color:#768078;font-size:12px;font-weight:600;margin-left:-3px;padding-left:10px;border-left:1px solid #cbd2ca}
+.main-nav{display:flex;align-items:center;gap:42px;margin:0 auto}
+.main-nav a{font-size:15px;font-weight:600;transition:color .2s}
+.main-nav a:hover{color:var(--green-800)}
+.main-nav a.only-mobile{display:none}
+.header-actions{display:flex;align-items:center;gap:20px}
+.text-button{border:0;background:none;padding:10px 0;font-size:14px;font-weight:600}
+.header-cta{border:0;border-radius:7px;padding:12px 20px;color:white;background:var(--green-900);font-size:14px;font-weight:700}
+.menu-button{display:none;border:0;background:transparent;padding:6px;color:var(--green-900)}
+.hero{min-height:665px;position:relative;background:#d7dfd2}
+.hero-media,.hero-overlay{position:absolute;inset:0}
+.hero-media img{width:100%;height:100%;object-fit:cover;object-position:center}
+.hero-overlay{background:linear-gradient(90deg,rgba(8,45,29,.9) 0%,rgba(8,45,29,.76) 35%,rgba(8,45,29,.16) 65%,rgba(8,45,29,0) 100%)}
+.hero-content{min-height:665px;position:relative;display:flex;flex-direction:column;justify-content:center;color:white}
+.hero-copy{max-width:660px;padding-bottom:62px}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;margin-bottom:24px;color:#e7f3e8;font-size:14px;font-weight:600;letter-spacing:.08em}
+.eyebrow-dot{width:8px;height:8px;border-radius:50%;background:var(--sun);box-shadow:0 0 0 6px rgba(255,182,51,.16)}
+.hero h1{font-size:clamp(43px,5vw,68px);line-height:1.22;letter-spacing:-.05em;font-weight:700}
+.hero h1 em{color:#ffd478;font-style:normal}
+.hero-copy>p{margin-top:23px;color:rgba(255,255,255,.82);font-size:18px;line-height:1.75}
+.hero-buttons{display:flex;gap:12px;margin-top:35px}
+.button{min-height:54px;border:0;border-radius:7px;padding:0 24px;display:inline-flex;align-items:center;justify-content:center;gap:11px;font-size:15px;font-weight:700;transition:transform .2s,background .2s}
+.button:hover{transform:translateY(-2px)}
+.button.primary{color:white;background:var(--green-900)}
+.hero .button.primary{color:var(--green-950);background:var(--sun)}
+.button.secondary{border:1px solid rgba(255,255,255,.55);color:white;background:rgba(255,255,255,.08);backdrop-filter:blur(8px)}
+.hero-trust{position:absolute;left:0;bottom:0;min-width:670px;height:96px;display:flex;align-items:center;background:var(--cream);color:var(--ink);border-radius:0 18px 0 0}
+.hero-trust::before{content:"";position:absolute;right:100%;top:0;bottom:0;width:100vw;background:var(--cream)}
+.hero-trust>div{display:flex;align-items:center;gap:13px;padding:0 27px;border-right:1px solid var(--line)}
+.hero-trust>div:first-child{padding-left:0}
+.hero-trust>div:last-child{border:0}
+.hero-trust svg{color:var(--green-800)}
+.hero-trust span{display:grid;gap:4px}
+.hero-trust b{font-size:14px}
+.hero-trust small{color:var(--muted);font-size:12px}
+.intro-strip{background:white;border-bottom:1px solid var(--line)}
+.intro-inner{min-height:148px;display:flex;align-items:center;justify-content:space-between;gap:40px}
+.intro-inner p{font-size:19px;line-height:1.65}
+.intro-inner p b{color:var(--green-900)}
+.intro-tags{display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end}
+.intro-tags span{padding:10px 15px;border:1px solid #d7ded5;border-radius:100px;color:#415047;font-size:13px;font-weight:600}
+.section{padding:120px 0}
+.section-heading{margin-bottom:48px}
+.section-heading.split{display:flex;align-items:end;justify-content:space-between;gap:40px}
+.section-heading.center{text-align:center}
+.kicker{display:block;color:var(--green-800);font-size:14px;font-weight:800;letter-spacing:.08em;margin-bottom:14px}
+.section-heading h2{font-size:clamp(34px,4vw,48px);line-height:1.28;letter-spacing:-.045em}
+.section-heading>p{margin-top:17px;color:var(--muted);font-size:16px;line-height:1.75}
+.heading-note{text-align:right}
+.heading-note span{font-size:14px;font-weight:700}
+.heading-note p{color:var(--muted);font-size:12px;line-height:1.7;margin-top:6px}
+.market-section{background:var(--cream)}
+.market-card{border-radius:16px;overflow:hidden;background:white;border:1px solid #e1e4dc;box-shadow:0 18px 50px rgba(32,53,41,.06)}
+.market-card-head{min-height:108px;display:flex;align-items:center;justify-content:space-between;padding:26px 36px;border-bottom:1px solid var(--line)}
+.market-card-head>div{display:flex;align-items:center;gap:18px}
+.market-card-head h3{font-size:20px}
+.live-badge{padding:6px 9px;border-radius:4px;background:var(--green-100);color:var(--green-800);font-size:10px;font-weight:800;letter-spacing:.12em}
+.market-card-head a,.news-section .section-heading a{display:inline-flex;align-items:center;gap:8px;color:var(--green-800);font-size:13px;font-weight:700}
+.price-row{min-height:82px;display:grid;grid-template-columns:55px 220px 1fr 165px;align-items:center;gap:25px;padding:0 36px;border-bottom:1px solid #edf0ea}
+.price-rank{color:#a1aaa3;font-size:12px;font-weight:700;font-variant-numeric:tabular-nums}
+.price-name{display:flex;align-items:center;gap:8px;min-width:0}
+.price-name b{font-size:18px}
+.price-name small{color:var(--muted);font-size:12px}
+.price-name button{border:0;border-radius:100px;padding:6px 9px;color:var(--green-800);background:var(--green-100);font-size:10px;font-weight:700;white-space:nowrap}
+.price-bar{height:5px;border-radius:10px;overflow:hidden;background:#e9eef1}
+.price-bar span{display:block;height:100%;border-radius:inherit;background:#3d79aa}
+.price-value{display:flex;justify-content:flex-end;align-items:baseline;gap:13px}
+.price-value small{color:var(--muted);font-size:11px}
+.price-value b{width:82px;color:#286898;font-size:20px;text-align:right;font-variant-numeric:tabular-nums}
+.market-card-foot{min-height:60px;display:flex;align-items:center;gap:10px;padding:0 36px;color:#7a857d;background:#f7f9f6}
+.market-card-foot p{font-size:11px}
+.products-section{background:white}
+.product-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+.product-card{border:1px solid #dde4dd;border-radius:15px;overflow:hidden;background:white;transition:transform .25s,box-shadow .25s}
+.product-card:hover{transform:translateY(-5px);box-shadow:0 18px 45px rgba(25,60,39,.1)}
+.product-card.featured{border-color:rgba(12,83,52,.4);box-shadow:0 10px 35px rgba(25,60,39,.08)}
+.product-image{height:245px;overflow:hidden;position:relative;background:#ece9df}
+.product-image img{width:100%;height:100%;object-fit:cover;transform:scale(1.12)}
+.product-image.own img{transform:none}
+.product-apple img{object-position:67% 43%}
+.product-potato img{object-position:79% 82%}
+.product-persimmon img{object-position:92% 54%}
+.product-image span{position:absolute;top:18px;left:18px;padding:7px 11px;border-radius:5px;color:#4e5a51;background:rgba(255,255,255,.9);font-size:11px;font-weight:700;backdrop-filter:blur(5px)}
+.product-image span.soon{color:white;background:var(--green-900)}
+.product-content{padding:26px 25px 24px}
+.product-content .product-variety{color:var(--green-800);font-size:12px;font-weight:700;min-height:18px}
+.product-content h3{margin-top:6px;font-size:24px;letter-spacing:-.03em}
+.product-content>p:not(.product-variety){min-height:52px;margin-top:11px;color:var(--muted);font-size:13px;line-height:1.65}
+.product-meta{margin-top:20px;padding:15px 0;border-top:1px solid #e7ebe5}
+.product-meta span{display:flex;align-items:center;gap:7px;color:#526057;font-size:12px}
+.product-content button{width:100%;height:48px;border:1px solid var(--green-900);border-radius:6px;display:flex;align-items:center;justify-content:center;gap:8px;color:var(--green-900);background:white;font-size:13px;font-weight:700;transition:.2s}
+.product-content button:hover{color:white;background:var(--green-900)}
+.product-caption{margin-top:23px;color:#7b867e;font-size:11px;text-align:center}
+.process-section{color:white;background:var(--green-950);position:relative}
+.process-section::before{content:"";position:absolute;inset:0;opacity:.035;background-image:radial-gradient(circle at 1px 1px,#fff 1px,transparent 0);background-size:24px 24px}
+.process-section .page-width{position:relative}
+.kicker.light{color:#a9d0af}
+.process-section .section-heading>p{color:rgba(255,255,255,.6)}
+.steps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.step-card{min-height:268px;position:relative;padding:27px;border:1px solid rgba(255,255,255,.14);border-radius:10px;background:rgba(255,255,255,.035)}
+.step-icon{width:52px;height:52px;display:grid;place-items:center;margin-bottom:36px;border-radius:50%;color:#ffcb68;background:rgba(255,182,51,.12)}
+.step-card>span{position:absolute;top:29px;right:28px;color:rgba(255,255,255,.3);font-size:12px;font-weight:700}
+.step-card h3{font-size:19px}
+.step-card p{margin-top:12px;color:rgba(255,255,255,.58);font-size:13px;line-height:1.7}
+.promise{min-height:110px;margin-top:22px;padding:22px 28px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:20px;border-radius:10px;color:var(--ink);background:var(--sun)}
+.promise-mark{width:54px;height:54px;display:grid;place-items:center;color:white;background:var(--green-900);border-radius:50%}
+.promise span{color:#765000;font-size:11px;font-weight:800}
+.promise h3{margin-top:4px;font-size:17px}
+.promise p{color:#5d491e;font-size:12px;line-height:1.7;text-align:right}
+.local-section{background:var(--cream)}
+.local-grid{min-height:450px;display:grid;grid-template-columns:1.05fr .95fr;gap:80px;align-items:center}
+.local-copy h2{font-size:clamp(34px,4vw,48px);line-height:1.35;letter-spacing:-.045em}
+.local-copy>p{max-width:580px;margin-top:22px;color:var(--muted);font-size:15px;line-height:1.9}
+.survey-result{display:flex;gap:35px;margin-top:40px}
+.survey-result>div{display:flex;align-items:center;gap:11px}
+.survey-result b{color:var(--green-900);font-size:30px;letter-spacing:-.04em}
+.survey-result span{color:#637168;font-size:11px;line-height:1.5}
+.local-copy>small{display:block;margin-top:18px;color:#939d95;font-size:10px}
+.local-visual{height:440px;position:relative;display:grid;place-items:center}
+.local-visual::before,.local-visual::after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(12,83,52,.13)}
+.local-visual::before{width:410px;height:410px}
+.local-visual::after{width:325px;height:325px}
+.local-circle{width:258px;height:258px;position:relative;z-index:2;border-radius:50%;overflow:hidden;box-shadow:0 22px 60px rgba(12,83,52,.13)}
+.local-circle img{width:100%;height:100%;object-fit:cover}
+.route-line{position:absolute;height:1px;background:rgba(12,83,52,.2);transform-origin:left}
+.route-line.one{width:90px;top:71px;left:40px;transform:rotate(35deg)}
+.route-line.two{width:90px;right:27px;bottom:98px;transform:rotate(-28deg)}
+.location-chip{position:absolute;z-index:3;right:-18px;bottom:38px;min-width:228px;padding:14px 17px;display:flex;align-items:center;gap:11px;border-radius:8px;background:white;box-shadow:0 12px 35px rgba(24,54,36,.12)}
+.location-chip svg{color:var(--green-800)}
+.location-chip span{display:grid;gap:3px;color:var(--muted);font-size:10px}
+.location-chip b{color:var(--ink);font-size:12px}
+.news-section{background:white}
+.news-list{border-top:2px solid var(--ink)}
+.news-list>a{min-height:100px;display:grid;grid-template-columns:70px 1fr 130px 24px;gap:24px;align-items:center;border-bottom:1px solid var(--line)}
+.news-label{width:43px;padding:6px 0;border-radius:4px;color:var(--green-800);background:var(--green-100);font-size:11px;font-weight:700;text-align:center}
+.news-label.muted{color:#66716a;background:#f0f1ee}
+.news-list h3{font-size:16px}
+.news-list p{margin-top:6px;color:var(--muted);font-size:12px}
+.news-list time{color:#879088;font-size:11px;text-align:right}
+.news-list svg{color:#8c958e}
+.cta-section{padding:80px 0;color:white;background:var(--green-800)}
+.cta-inner{display:flex;align-items:center;justify-content:space-between;gap:40px}
+.cta-inner span{color:#bcd4c0;font-size:13px;font-weight:600}
+.cta-inner h2{margin-top:10px;font-size:32px;line-height:1.4;letter-spacing:-.04em}
+.light-button{color:var(--green-950);background:var(--sun)}
+footer{padding:50px 0 42px;color:#78837b;background:#10221a}
+.footer-top{padding-bottom:35px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.1)}
+.footer-brand{display:flex;align-items:center;gap:11px}
+.footer-brand img{width:43px;height:43px;border-radius:50%}
+.footer-brand>div{display:grid}
+.footer-brand b{color:white;font-size:19px}
+.footer-brand span{font-size:10px}
+.footer-links{display:flex;gap:28px;color:#c3cbc5;font-size:12px;font-weight:600}
+.footer-bottom{padding-top:28px;display:flex;justify-content:space-between;gap:30px;font-size:11px;line-height:1.9}
+.footer-bottom a{color:#c4ccc6}
+.copyright{margin-top:12px;color:#526057}
+.legal{display:flex;gap:22px}
+.modal-backdrop{position:fixed;inset:0;z-index:100;padding:20px;display:grid;place-items:center;background:rgba(7,30,20,.72);backdrop-filter:blur(5px)}
+.alert-modal{width:min(480px,100%);position:relative;padding:38px 40px 35px;border-radius:16px;background:var(--cream);box-shadow:0 30px 100px rgba(0,0,0,.3);max-height:92vh;overflow:auto}
+.modal-close{position:absolute;right:18px;top:18px;border:0;background:transparent;padding:7px;color:#6f7b72}
+.modal-icon{width:54px;height:54px;display:grid;place-items:center;margin-bottom:22px;border-radius:50%;color:var(--green-800);background:var(--green-100)}
+.modal-kicker{color:var(--green-800);font-size:12px;font-weight:800;letter-spacing:.08em}
+.alert-modal h2{margin-top:10px;font-size:29px;line-height:1.35;letter-spacing:-.04em}
+.alert-modal>p,.modal-success>p{margin-top:14px;color:var(--muted);font-size:13px;line-height:1.7}
+.alert-modal form{display:grid;gap:15px;margin-top:25px}
+.alert-modal label:not(.consent):not(.ck){display:grid;gap:8px;font-size:12px;font-weight:700}
+.alert-modal input[type="tel"]{width:100%;height:50px;border:1px solid #cfd6ce;border-radius:6px;padding:0 14px;background:white;font-size:15px}
+.consent{display:flex;align-items:flex-start;gap:8px;color:#657168;font-size:11px;cursor:pointer}
+.consent input{margin-top:2px;accent-color:var(--green-800)}
+.alert-modal form .button{width:100%;margin-top:3px}
+.alert-modal>small{display:block;margin-top:14px;color:#8d968f;font-size:10px;text-align:center}
+.modal-success{text-align:center;padding-top:20px}
+.success-check{width:70px;height:70px;margin:0 auto 22px;display:grid;place-items:center;border-radius:50%;color:white;background:var(--green-800)}
+.modal-success .button{width:100%;margin-top:27px}
+.toast{position:fixed;z-index:120;left:50%;bottom:30px;transform:translateX(-50%);padding:14px 20px;border-radius:8px;color:white;background:var(--ink);box-shadow:0 10px 35px rgba(0,0,0,.2);font-size:13px;max-width:90vw}
+@media (max-width:960px){
+.header-inner{padding:0 24px}.main-nav{gap:22px}.main-nav a{font-size:13px}.text-button{display:none}.hero-trust{min-width:620px}
+.price-row{grid-template-columns:40px 170px 1fr 135px;gap:18px}.product-image{height:210px}.steps-grid{grid-template-columns:repeat(2,1fr)}.local-grid{gap:30px}}
+@media (max-width:760px){
+.page-width{width:min(100% - 36px,560px)}
+.site-header{height:70px}.header-inner{padding:0 18px}.brand img{width:40px;height:40px}.brand span{font-size:22px}.brand small,.header-cta{display:none}.menu-button{display:block}
+.main-nav{display:none;position:absolute;left:0;right:0;top:70px;padding:18px;background:var(--cream);border-bottom:1px solid var(--line);box-shadow:0 15px 30px rgba(15,40,25,.08)}
+.main-nav.is-open{display:grid;gap:0}.main-nav a{padding:14px 5px;font-size:15px;border-bottom:1px solid var(--line)}.main-nav a.only-mobile{display:block}
+.header-actions{margin-left:auto}
+.hero{min-height:700px}.hero-media img{object-position:68% center}
+.hero-overlay{background:linear-gradient(90deg,rgba(8,45,29,.94),rgba(8,45,29,.74) 62%,rgba(8,45,29,.34))}
+.hero-content{min-height:700px;justify-content:flex-start;padding-top:86px}.hero-copy{padding:0}.hero h1{font-size:42px}.hero-copy>p{font-size:15px}.desktop-break{display:none}
+.hero-buttons{display:grid}.hero .button{width:100%}
+.hero-trust{left:-18px;right:-18px;bottom:0;min-width:0;height:100px;border-radius:0}.hero-trust::before{display:none}
+.hero-trust>div{flex:1;gap:7px;padding:0 9px;justify-content:center;text-align:center}.hero-trust>div:first-child{padding-left:9px}.hero-trust svg{display:none}.hero-trust b{font-size:11px}.hero-trust small{font-size:9px}
+.intro-inner{padding:35px 0;display:grid}.intro-inner p{font-size:16px}.intro-tags{justify-content:flex-start;gap:7px}.intro-tags span{font-size:10px;padding:8px 10px}
+.section{padding:82px 0}.section-heading,.section-heading.split{margin-bottom:35px;display:block}.section-heading h2{font-size:34px}.heading-note{margin-top:24px;text-align:left}
+.market-card-head{min-height:90px;padding:20px}.market-card-head>div{display:grid;gap:8px}.market-card-head h3{font-size:16px}.market-card-head a{font-size:0}.market-card-head a svg{width:22px;height:22px}
+.price-row{min-height:75px;padding:0 18px;grid-template-columns:25px 1fr 100px;gap:10px}.price-rank{font-size:10px}.price-name{flex-wrap:wrap}.price-name b{font-size:16px}.price-name button{order:3;padding:4px 7px}.price-bar{display:none}
+.price-value{display:grid;gap:1px;justify-content:end}.price-value small{text-align:right}.price-value b{font-size:17px}
+.market-card-foot{padding:14px 18px;align-items:flex-start}
+.product-grid{grid-template-columns:1fr}.product-image{height:260px}.steps-grid{grid-template-columns:1fr}.step-card{min-height:220px}
+.promise{padding:24px;grid-template-columns:auto 1fr}.promise p{grid-column:1/-1;text-align:left}
+.local-grid{grid-template-columns:1fr}.survey-result{gap:18px;justify-content:space-between}.survey-result>div{display:grid;gap:3px}
+.local-visual{height:390px}.local-visual::before{width:350px;height:350px}.local-visual::after{width:285px;height:285px}.local-circle{width:230px;height:230px}.location-chip{right:0}
+.news-section .section-heading a{margin-top:20px}.news-list>a{padding:20px 0;grid-template-columns:52px 1fr 18px;gap:10px}.news-list time{display:none}.news-list p{display:none}.news-list h3{font-size:14px;line-height:1.55}
+.cta-inner{display:grid}.cta-inner h2{font-size:27px}.light-button{width:100%}
+.footer-top,.footer-bottom{display:grid;gap:28px}.footer-links{flex-wrap:wrap;gap:15px 23px}.legal{order:-1}
+.alert-modal{padding:34px 24px 27px}.alert-modal h2{font-size:25px}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
+
+/* 피그마에 없는 화면(가입·내 정보·문의·약관·운영)용 — 같은 색·글꼴·모서리 값 사용 */
+.proto{background:var(--cream-dark);color:var(--muted);font-size:11px;text-align:center;padding:7px 12px}
+.inner{max-width:720px;padding:72px 0 110px;font-size:15px;line-height:1.75}
+.inner.adm{max-width:1180px}
+.inner section{margin-bottom:56px}
+.inner h1{font-size:clamp(30px,4vw,40px);line-height:1.28;letter-spacing:-.045em}
+.inner h2{font-size:24px;line-height:1.35;letter-spacing:-.035em;margin-top:0}
+.inner h3{font-size:17px;line-height:1.45}
+.inner a:not(.btn):not(.row):not(.brand){color:var(--green-800);font-weight:600}
+.inner .back{font-size:13px}
+.sub{color:var(--muted);font-size:13px;line-height:1.7}
+.note{font-size:11px;color:#7a857d;margin-top:14px;line-height:1.7}
+.btn{display:flex;align-items:center;justify-content:center;width:100%;min-height:52px;border:0;border-radius:7px;background:var(--green-900);color:#fff;font-weight:700;font-size:15px;padding:10px 22px;text-align:center}
+.btn:hover{background:var(--green-950)}
+.btn.line{background:#fff;color:var(--green-900);border:1px solid var(--green-900)}
+.btn.line:hover{background:var(--green-50)}
+.btn.quiet{background:var(--cream-dark);color:var(--ink)}
+.btn.sm{display:inline-flex;width:auto;min-height:42px;font-size:13px;padding:8px 15px}
+.btn.warn{background:#fff;color:#b42318;border:1px solid #b42318}
+.chip{display:inline-block;background:var(--sun);color:#4a3200;font-size:11px;font-weight:700;padding:6px 10px;border-radius:5px;white-space:nowrap}
+.chip.gray{background:#f0f1ee;color:#66716a}
+.list{border-top:2px solid var(--ink);margin-top:18px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:18px 0;border-bottom:1px solid var(--line);color:inherit}
+.row .t{font-weight:700;font-size:15px}
+.box{background:#fff;border:1px solid #e1e4dc;border-radius:15px;padding:22px 24px}
+.prose{white-space:pre-wrap;margin-top:18px;color:#33423a}
+dl.kv{margin:0 0 18px;display:grid;grid-template-columns:auto 1fr;gap:8px 20px;font-size:14px}
+dl.kv dt{color:var(--muted)}dl.kv dd{margin:0}
+.inner details{border-bottom:1px solid var(--line)}
+.inner summary{cursor:pointer;padding:18px 0;font-weight:700;font-size:15px;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.inner summary::-webkit-details-marker{display:none}
+.inner summary::after{content:"+";color:#8c958e;font-weight:400;font-size:20px;line-height:1}
+.inner details[open] summary::after{content:"−"}
+.inner details p{padding:0 0 20px;color:var(--muted);font-size:14px}
+form.f{display:grid;gap:18px;margin-top:22px}
+label.fl{display:grid;gap:8px;font-weight:700;font-size:13px}
+label.fl small{font-weight:400;color:var(--muted);font-size:11px}
+input[type=text],input[type=number],input[type=date],.inner input[type=tel],select,textarea{width:100%;min-height:50px;border:1px solid #cfd6ce;border-radius:6px;background:#fff;padding:10px 14px;font-size:15px;color:var(--ink)}
+textarea{min-height:130px;resize:vertical;line-height:1.6}
+label.ck{display:flex;gap:9px;align-items:flex-start;font-size:13px;padding:5px 0;cursor:pointer;font-weight:400}
+label.ck input{width:18px;height:18px;margin-top:3px;accent-color:var(--green-800);flex:none}
+.err{color:#b42318;font-size:13px;font-weight:600}
+.stat{display:grid;grid-template-columns:70px 1fr;gap:12px;align-items:baseline;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
+.stat b{font-size:26px;color:var(--green-900);letter-spacing:-.04em}
+.pd-pic{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:15px;background:#ece9df}
+.sec-h{display:flex;justify-content:space-between;align-items:center;gap:14px;margin-bottom:8px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.calc{font-size:13px;color:var(--muted);background:var(--green-50);border-radius:6px;padding:11px 14px}
+.adm{display:grid;gap:28px}
+.adm-nav select{max-width:320px}
+.adm-nav ul{display:none;list-style:none;margin:0;padding:0}
+.adm-nav li a{display:block;padding:10px 13px;border-radius:7px;color:var(--ink)!important;font-size:14px;font-weight:600}
+.adm-nav li a[aria-current]{background:var(--green-900);color:#fff!important}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0}
+.cards .box b{display:block;font-size:30px;letter-spacing:-.04em;color:var(--green-900);line-height:1.3}
+.inner table{width:100%;border-collapse:collapse;font-size:13px;margin-top:14px}
+.inner th,.inner td{text-align:left;padding:12px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+.inner th{color:var(--muted);font-weight:600;font-size:12px}
+.tw{overflow-x:auto}
+.alert-modal .inner{padding:0;max-width:none}
+.alert-modal .inner h2{font-size:25px;margin-top:0}
+.footer-admin{margin-top:8px}
+@media(min-width:900px){.adm{grid-template-columns:200px minmax(0,1fr)}.adm-nav select{display:none}.adm-nav ul{display:block}}
+
+.pic{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;background:#ece9df}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" role="status" aria-live="polite" style="display:none"></div>
+<script>
+
+const KEY='jikgong-proto-v3';
+const I={
+home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+prices:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6l6 6 4-4 8 8M21 10v6h-6"/></svg>',
+shop:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><path d="M3 8l9-5 9 5v8l-9 5-9-5zM3 8l9 5 9-5M12 13v8"/></svg>',
+news:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6zM9 11h7M9 15h7"/></svg>',
+me:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>',
+bus:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="11" rx="2"/><path d="M3 11h18"/><circle cx="7.5" cy="18.5" r="1.5"/><circle cx="16.5" cy="18.5" r="1.5"/></svg>'};
+const ST={prep:'준비 중',soon:'곧 오픈',open:'모집 중',closed:'이번 회차 마감',end:'종료'};
+function seed(){return{v:1,me:null,seenPopup:false,
+site:{phone:'010-2738-8803',popupOn:false,priceDate:'2026-11-16',logo:'',bizName:'',bizCeo:'',bizNo:'',bizSale:'',bizAddr:''},
+apts:[{id:'a1',name:'달빛마을 3단지',addr:'경기 고양시 덕양구 화정동',on:true}],
+products:[
+{id:'apple',name:'사과',origin:'산지 협의 중',variety:'부사',farm:'가정용',kg:20,seats:8,price:0,status:'soon',desc:'산지 농가에서 바로 받아 토요일에 문 앞까지 가져다 드려요.',when:'산지 협의 중',store:'서늘한 곳이나 냉장 보관',monitor:'',filled:0,maxB:3,photo:''},
+{id:'goguma',name:'고구마',origin:'산지 협의 중',variety:'',farm:'',kg:20,seats:8,price:0,status:'prep',desc:'달고 촉촉한 고구마를 산지와 함께 꼼꼼히 고르고 있어요.',when:'산지 협의 중',store:'',monitor:'',filled:0,maxB:3,photo:''},
+{id:'dangam',name:'단감',origin:'산지 협의 중',variety:'부유',farm:'',kg:20,seats:8,price:0,status:'prep',desc:'아삭한 제철 단감을 좋은 가격으로 나눌 방법을 찾고 있어요.',when:'산지 협의 중',store:'',monitor:'단감',filled:0,maxB:3,photo:''}],
+prices:[
+{id:'p1',name:'쪽파',kind:'',rate:-44.7,basis:'한 달 전',hide:false},
+{id:'p2',name:'감자',kind:'수미',rate:-35.9,basis:'한 달 전',hide:false},
+{id:'p3',name:'양파',kind:'',rate:-34.8,basis:'한 달 전',hide:false},
+{id:'p4',name:'단감',kind:'부유',rate:-29.1,basis:'한 달 전',hide:false},
+{id:'p5',name:'대파',kind:'',rate:-28.9,basis:'한 달 전',hide:false},
+{id:'p6',name:'들깨',kind:'',rate:-22.0,basis:'한 달 전',hide:false}],
+news:[
+{id:'n1',title:'달빛마을 3단지 수요조사 결과를 알려 드립니다',body:'11월 11일부터 17일까지 달빛마을 3단지 주민 여러분이 답해 주셨습니다.\n\n산지 직거래 공동구매를 살 의향이 있다는 답이 71%였고, 없다는 답은 없었습니다.\n망설이는 이유로는 품질을 미리 볼 수 없다는 점을 가장 많이 꼽으셨습니다(46%).\n수확하고 고른 날의 사진이 있으면 주문하겠다는 답이 75%였습니다.\n받는 방법은 문 앞에 두면 언제든 좋다는 답이 79%였습니다.\n\n답해 주신 내용대로 준비하겠습니다.',date:'2026-11-20',pin:true,on:true},
+{id:'n2',title:'직공 홈페이지를 열었습니다',body:'지금은 시세 소식을 보고, 준비 중인 공동구매의 오픈 알림을 신청할 수 있습니다. 주문은 공동구매가 열리면 시작합니다.',date:'2026-11-20',pin:false,on:true}],
+faqs:[
+{id:'f1',cat:'공동구매 방식',q:'공동구매는 어떻게 진행되나요?',a:'주말에 공동구매가 열리면 미리 입금하고 참여합니다. 한 상자를 나눌 가구 수가 모이면 성사되고, 금요일 오전 10시에 마감합니다. 토요일에 문 앞으로 가져다 드립니다.',on:true},
+{id:'f2',cat:'공동구매 방식',q:'왜 미리 입금하나요?',a:'산지에서 한 상자 단위로 주문해야 운송비가 줄어듭니다. 참여가 정해져야 농가에 주문할 수 있어서 미리 받습니다.',on:true},
+{id:'f3',cat:'입금·환불',q:'사람이 다 모이지 않으면 어떻게 되나요?',a:'성사되지 않은 주문은 전액 환불합니다.',on:true},
+{id:'f4',cat:'입금·환불',q:'주문을 취소할 수 있나요?',a:'금요일 오전 10시 마감 전까지는 취소할 수 있습니다. 마감 뒤에는 농가에 주문이 들어가 취소할 수 없습니다.',on:true},
+{id:'f5',cat:'배달',q:'상한 것이 오면 어떻게 하나요?',a:'받은 날부터 3일 안에 내 정보의 주문에서 사진과 함께 문의를 남겨 주세요.',on:true},
+{id:'f6',cat:'회원',q:'식당이나 사업장도 주문할 수 있나요?',a:'지금은 아파트 주민만 가입할 수 있습니다. 식당과 사업장은 추후 확대할 예정입니다.',on:true},
+{id:'f7',cat:'회원',q:'우리 아파트는 언제 열리나요?',a:'회원가입 화면의 "우리 단지도 열어 주세요"에 단지 이름을 남겨 주시면 열릴 때 알려 드립니다.',on:true}],
+terms:[
+{id:'t1',kind:'use',ver:'0.1',date:'2026-11-20',body:'이용약관 초안을 준비하고 있습니다.\n\n들어갈 내용: 공동구매 성사 조건, 성사되지 않았을 때의 환불, 마감 뒤 취소 제한, 배달 완료 후 문의 기한(3일).'},
+{id:'t2',kind:'privacy',ver:'0.1',date:'2026-11-20',body:'개인정보 처리방침 초안을 준비하고 있습니다.\n\n수집 항목: 이름, 휴대폰 번호, 아파트와 동·호수, 소셜 로그인 식별값.\n이용 목적: 회원 확인, 배달, 공동구매 안내.\n개인정보 보호책임자: 본문에 표시 예정.'}],
+members:[
+{id:'m1',name:'예시 회원 가',phone:'010-0000-0001',apt:'a1',dong:'301',ho:'101',via:'kakao',mk:true,joined:'2026-11-20',state:'ok',memo:''},
+{id:'m2',name:'예시 회원 나',phone:'010-0000-0002',apt:'a1',dong:'307',ho:'502',via:'naver',mk:false,joined:'2026-11-20',state:'ok',memo:''}],
+alerts:[{id:'al1',phone:'010-0000-0001',p:'apple',at:'2026-11-20'}],
+asks:[{id:'q1',m:'m2',type:'상품',body:'사과는 한 번에 몇 kg씩 받게 되나요?',at:'2026-11-20',reply:''}],
+apreq:[]}}
+let S;try{S=JSON.parse(localStorage.getItem(KEY))}catch(e){}
+if(!S||S.v!==1)S=seed();
+let UI={modal:null,edit:null,del:null,q:'',err:'',img:null,pend:null,after:null,draft:null,jd:{}};
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Math.random().toString(36).slice(2,9);
+const today=()=>new Date().toISOString().slice(0,10);
+const won=n=>Number(n).toLocaleString('ko-KR')+'원';
+const num=n=>String(Math.round(n*100)/100);
+const me=()=>S.members.find(m=>m.id===S.me);
+const by=(a,id)=>a.find(x=>x.id===id);
+const go=h=>{if(location.hash==='#'+h)render();else location.hash=h};
+let tt;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',3200)}
+function fdate(d){const p=String(d||'').split('-');return p.length===3?(+p[1])+'월 '+(+p[2])+'일':''}
+function seatMsg(p){const per=+p.seats||8,f=+p.filled||0,mb=+p.maxB||0,done=Math.floor(f/per);
+ if(mb&&done>=mb)return{t:'이번 주 마감',full:true};
+ const left=per-(f%per),few=left<=per/2;let t=left===1?'마지막 한 자리':few?left+'자리 남았습니다':'선착순 모집 중';
+ if(done>0)t=done+'차 마감, '+(done+1)+'차 '+(few?t:'선착순 모집 중');return{t}}
+function hasAlert(pid){return S.me&&S.alerts.some(a=>a.m===S.me&&a.p===pid)}
+function shown(){return S.prices.filter(p=>!p.hide&&p.rate<0).sort((a,b)=>a.rate-b.rate).slice(0,9)}
+function priceRows(list){if(!list.length)return'<p class="box" style="margin-top:14px">이번 주는 크게 떨어진 품목이 없습니다.</p>';
+ const max=Math.abs(list[0].rate);
+ return'<div class="board">'+list.map((p,i)=>{const pr=S.products.find(x=>x.monitor&&x.monitor===p.name&&x.status!=='end');
+  const tag=pr?'<span class="tag">'+(pr.status==='open'?'공동구매 중':'알림 신청 가능')+'</span>':'';
+  const inner='<span class="rk">'+(i+1)+'</span><span><span class="nm">'+esc(p.name)+(p.kind?'<small>'+esc(p.kind)+'</small>':'')+tag+'</span><span class="bar" aria-hidden="true"><b style="width:'+Math.round(Math.abs(p.rate)/max*100)+'%"></b></span></span><span class="rate"><span style="font-size:.6em;vertical-align:.15em">▼</span> '+Math.abs(p.rate).toFixed(1)+'%<small>'+esc(p.basis)+'보다</small></span>';
+  return pr?'<a class="pr" href="#p-'+pr.id+'">'+inner+'</a>':'<div class="pr">'+inner+'</div>'}).join('')+'</div>'}
+function ticket(p){const st=p.status,unit=p.kg&&p.seats?num(p.kg/p.seats)+'kg':'',per=p.price&&p.seats?won(Math.round(p.price/p.seats)):'';
+ const from=String(p.origin||'').split(' ').pop();const sm=st==='open'?seatMsg(p):null;
+ const chip=st==='open'?'<span class="chip">'+sm.t+'</span>':'<span class="chip gray">'+ST[st]+'</span>';
+ let kv='';
+ if(st==='prep')kv='<p class="sub" style="margin-bottom:16px">'+esc(p.desc)+'</p>';
+ else kv='<dl class="kv"><dt>가격</dt><dd>'+(per?'<b>'+per+'</b> 배달비 포함':'오픈할 때 알려 드려요')+'</dd><dt>나누는 방식</dt><dd>'+num(p.kg)+'kg 한 상자를 '+p.seats+'가구가 나눠요</dd><dt>마감</dt><dd>금요일 오전 10시</dd><dt>배달</dt><dd>토요일, 문 앞까지</dd></dl>';
+ let btn;
+ if(st==='open'&&!sm.full)btn='<button class="btn" data-a="order" data-id="'+p.id+'">공동구매 참여</button>';
+ else btn=hasAlert(p.id)?'<button class="btn quiet" data-a="alertOff" data-id="'+p.id+'">알림 신청됨, 누르면 취소</button>':'<button class="btn line" data-a="alertOn" data-id="'+p.id+'">'+(st==='closed'||(sm&&sm.full)?'다음 회차 알림 신청':'오픈 알림 신청')+'</button>';
+ return'<article class="tk">'+(p.photo?'<img class="pic" src="'+p.photo+'" alt="'+esc(p.name)+' 사진">':'')+'<div class="tk-top">'+(st==='prep'?'':'<div class="route"><b>'+esc(from)+'</b><span class="ln"></span>'+I.bus+'<span class="ln"></span><b>우리 단지 문 앞</b></div>')+'<div class="tk-name"><h3><a href="#p-'+p.id+'">'+esc(p.name)+(unit&&st!=='prep'?' '+unit:'')+'</a></h3>'+chip+'</div></div><div class="tk-cut"></div><div class="tk-bot">'+kv+btn+'</div></article>'}
+function newsRows(n){return'<div class="list">'+n.map(x=>'<a class="row" href="#n-'+x.id+'"><span class="t">'+(x.pin?'<span class="chip gray" style="margin-right:8px">고정</span>':'')+esc(x.title)+'</span><span class="sub" style="white-space:nowrap">'+fdate(x.date)+'</span></a>').join('')+'</div>'}
+const liveNews=()=>S.news.filter(n=>n.on).sort((a,b)=>(b.pin-a.pin)||b.date.localeCompare(a.date));
+const liveProducts=()=>S.products.filter(p=>p.status!=='end');
+const V={
+home(){const ps=liveProducts();return'<section><h1>이번 주 많이 떨어진 농산물</h1><p class="sub" style="margin-top:6px">'+fdate(S.site.priceDate)+' 도매가 기준입니다. 가격 대신 얼마나 내렸는지만 보여 드려요.</p>'+priceRows(shown().slice(0,5))+'<p style="margin-top:14px"><a href="#prices">시세 전체 보기</a></p></section>'
+ +'<section><div class="sec-h"><h2>산지에서 문 앞까지, 공동구매</h2></div><p class="sub">한 상자를 이웃과 나눠 받습니다.</p>'+ps.map(ticket).join('')+'</section>'
+ +'<section><div class="sec-h"><h2>소식</h2><a href="#news">전체 보기</a></div>'+newsRows(liveNews().slice(0,2))+'</section>'},
+prices(){return'<section><h1>시세 소식</h1><p class="sub" style="margin-top:6px">'+fdate(S.site.priceDate)+' 기준, 하락 폭이 큰 순서입니다.</p>'+priceRows(shown())+'<p class="note">한 달 전보다 20%, 일주일 전보다 12%, 평년보다 15% 넘게 내린 상온 보관 품목만 보여 드립니다. 품목마다 가장 많이 내린 등급 하나를 골랐습니다.</p><p class="note">자료: 한국농수산식품유통공사 농산물유통정보(KAMIS) 서울 도매가</p></section>'},
+shop(){return'<section><h1>공동구매</h1><p class="sub" style="margin-top:6px">열리면 알림을 보내 드립니다.</p>'+liveProducts().map(ticket).join('')+'</section>'},
+product(id){const p=by(S.products,id);if(!p)return V.nf();
+ const info=[['산지',p.origin],['품종',p.variety],['농가·등급',p.farm],['보관',p.store]].filter(x=>x[1]);
+ return'<section><p><a href="#products">공동구매 목록으로</a></p>'+ticket(p)+'</section><section><h2>상품 안내</h2><p class="prose">'+esc(p.desc)+'</p>'+(info.length?'<dl class="kv" style="margin-top:16px">'+info.map(x=>'<dt>'+x[0]+'</dt><dd>'+esc(x[1])+'</dd>').join('')+'</dl>':'')+'<div class="box" style="margin-top:8px"><p>가구가 다 모이지 않으면 전액 환불합니다.</p><p style="margin-top:6px">받은 상품에 문제가 있으면 3일 안에 문의해 주세요.</p></div></section>'},
+news(){return'<section><h1>소식과 공지</h1>'+newsRows(liveNews())+'</section>'},
+newsOne(id){const n=by(S.news,id);if(!n||!n.on)return V.nf();return'<section><p><a href="#news-all">소식 목록으로</a></p><h1 style="margin-top:14px">'+esc(n.title)+'</h1><p class="sub" style="margin-top:6px">'+fdate(n.date)+'</p><p class="prose">'+esc(n.body)+'</p></section>'},
+help(){const cats=[...new Set(S.faqs.filter(f=>f.on).map(f=>f.cat))];
+ return'<section><h1>자주 묻는 질문</h1>'+cats.map(c=>'<h3 style="margin-top:26px">'+esc(c)+'</h3><div class="list">'+S.faqs.filter(f=>f.on&&f.cat===c).map(f=>'<details><summary>'+esc(f.q)+'</summary><p>'+esc(f.a)+'</p></details>').join('')+'</div>').join('')+'</section>'
+ +'<section><h2>더 궁금한 점이 있나요</h2><p class="sub" style="margin:6px 0 16px">문의를 남기면 답글을 달아 드립니다. 급한 일은 전화로 연락해 주세요. '+esc(S.site.phone)+'</p><a class="btn" href="#ask">문의 남기기</a></section>'},
+ask(){if(!S.me)return V.needLogin('문의를 남기려면 로그인해 주세요.');
+ return'<section><h1>문의 남기기</h1><form class="f" data-f="ask"><label class="fl">어떤 문의인가요<select name="type"><option>상품</option><option>회원</option><option>배달</option><option>기타</option></select></label><label class="fl">내용<textarea name="body" required></textarea></label>'+(UI.err?'<p class="err" role="alert">'+UI.err+'</p>':'')+'<button class="btn">문의 보내기</button></form></section>'},
+guide(){return'<section><h1>산지 농산물을 이웃과 나눠 받는 공동구매</h1><p style="margin-top:14px">직공은 값이 크게 떨어진 농산물을 산지에서 한 상자씩 받아, 같은 단지 이웃과 나누는 공동구매입니다. 농가는 팔 곳을 얻고, 우리는 갓 보낸 농산물을 문 앞에서 받습니다.</p></section><section><h2>이렇게 진행됩니다</h2><ol class="steps"><li><div><b>시세를 확인합니다</b><p class="sub">도매가가 많이 내린 품목을 매주 알려 드립니다.</p></div></li><li><div><b>공동구매에 참여합니다</b><p class="sub">주말에 열리면 미리 입금하고 자리를 잡습니다.</p></div></li><li><div><b>금요일 오전 10시에 마감합니다</b><p class="sub">한 상자를 나눌 가구가 모이면 농가에 주문합니다. 모이지 않으면 환불합니다.</p></div></li><li><div><b>토요일에 문 앞에서 받습니다</b><p class="sub">고속버스로 올라온 상자를 나눠 담아 가져다 드립니다.</p></div></li></ol></section><section><a class="btn line" href="#help">자주 묻는 질문 보기</a></section>'},
+terms(kind){const l=S.terms.filter(t=>t.kind===kind).sort((a,b)=>b.date.localeCompare(a.date)||b.ver.localeCompare(a.ver));const t=l[0];
+ return'<section><h1>'+(kind==='use'?'이용약관':'개인정보 처리방침')+'</h1>'+(t?'<p class="sub" style="margin-top:6px">버전 '+esc(t.ver)+', '+fdate(t.date)+' 시행</p><p class="prose">'+esc(t.body)+'</p>'+(l.length>1?'<h3 style="margin-top:28px">이전 버전</h3><div class="list">'+l.slice(1).map(o=>'<details><summary>버전 '+esc(o.ver)+', '+fdate(o.date)+'</summary><p class="prose">'+esc(o.body)+'</p></details>').join('')+'</div>':''):'<p>준비 중입니다.</p>')+'</section>'},
+needLogin(msg){return'<section><h1>로그인이 필요합니다</h1><p style="margin:10px 0 18px">'+msg+'</p><a class="btn" href="#login">로그인하러 가기</a></section>'},
+login(){if(S.me)return V.me();
+ return'<section><h1>로그인</h1><p class="sub" style="margin:8px 0 22px">쓰던 계정으로 바로 시작합니다. 처음이면 아파트와 동·호수만 더 알려 주세요.</p><div style="display:grid;gap:12px"><button class="btn line" data-a="social" data-id="naver">네이버로 시작하기</button><button class="btn line" data-a="social" data-id="kakao">카카오로 시작하기</button></div><p class="note">시안에서는 실제 로그인 대신 가입 화면으로 넘어갑니다. 실제 서비스에서는 네이버와 카카오의 공식 로그인 버튼을 씁니다.</p></section>'},
+join(){if(!UI.pend)return V.login();const ap=S.apts.filter(a=>a.on),j=UI.jd,jv=k=>' value="'+esc(j[k]||'')+'"',jc=k=>j[k]?' checked':'';
+ return'<section><h1>조금만 더 알려 주세요</h1><p class="sub" style="margin-top:6px">배달과 안내에만 씁니다.</p><form class="f" data-f="join"><label class="fl">이름<input type="text" name="name" autocomplete="name"'+jv('name')+' required></label><label class="fl">휴대폰 번호<input type="tel" name="phone" inputmode="numeric" autocomplete="tel" placeholder="010-1234-5678"'+jv('phone')+' required></label><label class="fl">아파트<select name="apt" required>'+ap.map(a=>'<option value="'+a.id+'">'+esc(a.name)+'</option>').join('')+'</select><small>지금 배달하는 단지만 고를 수 있습니다. <a href="#" data-a="aptReq">우리 단지도 열어 주세요</a></small></label><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label class="fl">동<input type="text" name="dong" inputmode="numeric" placeholder="301"'+jv('dong')+' required></label><label class="fl">호수<input type="text" name="ho" inputmode="numeric" placeholder="1203"'+jv('ho')+' required></label></div><div><label class="ck"><input type="checkbox" name="age"'+jc('age')+' required><span>만 14세 이상입니다 (필수)</span></label><label class="ck"><input type="checkbox" name="use"'+jc('use')+' required><span><a href="#" data-a="termsView" data-id="use">이용약관</a>에 동의합니다 (필수)</span></label><label class="ck"><input type="checkbox" name="pv"'+jc('pv')+' required><span><a href="#" data-a="termsView" data-id="privacy">개인정보 수집과 이용</a>에 동의합니다 (필수)</span></label><label class="ck"><input type="checkbox" name="mk"'+jc('mk')+'><span>공동구매 오픈과 새 상품 알림을 받겠습니다 (선택)</span></label></div>'+(UI.err?'<p class="err" role="alert">'+UI.err+'</p>':'')+'<button class="btn">가입하기</button></form></section>'},
+me(){const m=me();if(!m)return V.login();const ap=by(S.apts,m.apt);const al=S.alerts.filter(a=>a.phone===m.phone);const qs=S.asks.filter(a=>a.m===m.id);
+ return'<section><h1>'+esc(m.name)+' 님</h1><p class="sub" style="margin-top:6px">'+esc(ap?ap.name:'')+' '+esc(m.dong)+'동 '+esc(m.ho)+'호</p></section>'
+ +'<section><h2>알림 신청한 상품</h2>'+(al.length?'<div class="list">'+al.map(a=>{const p=by(S.products,a.p);return p?'<div class="row"><a class="t" href="#p-'+p.id+'">'+esc(p.name)+'</a><button class="btn sm quiet" data-a="alertOff" data-id="'+p.id+'">취소</button></div>':''}).join('')+'</div>':'<p class="sub" style="margin-top:8px">아직 없습니다. <a href="#products">공동구매 보러 가기</a></p>')+'</section>'
+ +'<section><h2>내 문의</h2>'+(qs.length?'<div class="list">'+qs.map(q=>'<details><summary>'+esc(q.body.slice(0,40))+'<span class="chip '+(q.reply?'':'gray')+'">'+(q.reply?'답변 완료':'접수')+'</span></summary><p>'+esc(q.body)+(q.reply?'<br><br><b>직공의 답글</b><br>'+esc(q.reply):'')+'</p></details>').join('')+'</div>':'<p class="sub" style="margin-top:8px">남긴 문의가 없습니다.</p>')+'<p style="margin-top:16px"><a class="btn line" href="#ask">문의 남기기</a></p></section>'
+ +'<section><h2>내 정보</h2><form class="f" data-f="meSave"><label class="fl">휴대폰 번호<input type="tel" name="phone" value="'+esc(m.phone)+'" required></label><label class="fl">아파트<select name="apt">'+S.apts.filter(a=>a.on||a.id===m.apt).map(a=>'<option value="'+a.id+'"'+(a.id===m.apt?' selected':'')+'>'+esc(a.name)+'</option>').join('')+'</select></label><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px"><label class="fl">동<input type="text" name="dong" value="'+esc(m.dong)+'" required></label><label class="fl">호수<input type="text" name="ho" value="'+esc(m.ho)+'" required></label></div><label class="ck"><input type="checkbox" name="mk"'+(m.mk?' checked':'')+'><span>공동구매 오픈과 새 상품 알림을 받겠습니다</span></label><button class="btn">내 정보 저장</button></form><div class="acts" style="margin-top:22px"><button class="btn sm quiet" data-a="logout">로그아웃</button><button class="btn sm warn" data-a="leaveAsk">회원 탈퇴</button></div></section>'},
+nf(){return'<section><h1>찾는 화면이 없습니다</h1><p style="margin:10px 0 18px">주소가 바뀌었거나 내려간 글입니다.</p><a class="btn" href="#home">처음으로</a></section>'}};
+function modalHtml(){const m=UI.modal;if(!m)return'';let c='';
+ if(m.t==='popup')c='<h2>달빛마을 3단지 주민 여러분이 답해 주셨습니다</h2><p class="sub" style="margin:6px 0 10px">11월 수요조사 결과입니다.</p><div class="stat"><b>71%</b><span>산지 직거래 공동구매를 살 의향이 있다</span></div><div class="stat"><b>79%</b><span>문 앞에 두면 언제든 좋다</span></div><div class="stat"><b>75%</b><span>수확한 날 사진이 있으면 주문하겠다</span></div><div class="stat"><b>46%</b><span>품질을 미리 볼 수 없어 망설인다</span></div><div style="display:grid;gap:10px;margin-top:20px"><a class="btn line" href="#n-n1" data-a="closeModal">결과 자세히 보기</a><button class="btn" data-a="closeModal">닫기</button></div>';
+ if(m.t==='consent')c='<h2>알림 받기에 동의해 주세요</h2><p style="margin:10px 0 20px">공동구매가 열리면 카카오톡으로 한 번 알려 드립니다. 내 정보에서 언제든 끌 수 있습니다.</p><div style="display:grid;gap:10px"><button class="btn" data-a="consentOk" data-id="'+m.id+'">동의하고 알림 신청</button><button class="btn quiet" data-a="closeModal">취소</button></div>';
+ if(m.t==='order')c='<h2>주문은 공동구매가 열리면 시작합니다</h2><p style="margin:10px 0 20px">지금은 화면만 미리 보는 시안입니다. 실제 주문과 입금 안내는 다음 단계에서 붙입니다.</p><button class="btn" data-a="closeModal">확인</button>';
+ if(m.t==='leave')c='<h2>회원 탈퇴</h2><p style="margin:10px 0 20px">내 정보와 문의 내역이 지워집니다. 계속할까요?</p><div style="display:grid;gap:10px"><button class="btn warn" data-a="leaveOk">탈퇴하기</button><button class="btn quiet" data-a="closeModal">취소</button></div>';
+ if(m.t==='apt')c='<h2>우리 단지도 열어 주세요</h2><p class="sub" style="margin-top:6px">단지가 열리면 연락드립니다.</p><form class="f" data-f="aptReq"><label class="fl">아파트 이름<input type="text" name="name" required></label><label class="fl">연락처<input type="tel" name="phone" required></label><button class="btn">신청하기</button><button type="button" class="btn quiet" data-a="closeModal">닫기</button></form>';
+ if(m.t==='terms'){const t=S.terms.filter(x=>x.kind===m.id).sort((a,b)=>b.date.localeCompare(a.date))[0];c='<h2>'+(m.id==='use'?'이용약관':'개인정보 처리방침')+'</h2><p class="prose">'+esc(t?t.body:'준비 중입니다.')+'</p><p style="margin-top:20px"><button class="btn" data-a="closeModal">닫기</button></p>'}
+ return'<div class="modal" role="dialog" aria-modal="true"><div>'+c+'</div></div>'}
+function siteShell(view,cur){const logo=S.site.logo?'<img src="'+S.site.logo+'" alt="">':'<i></i>';
+ const nav=[['home','홈'],['prices','시세'],['shop','공동구매'],['news','소식'],[S.me?'me':'login',S.me?'내 정보':'로그인']];
+ const ic=['home','prices','shop','news','me'];const b=S.site;
+ const biz=b.bizName?esc(b.bizName)+' 대표 '+esc(b.bizCeo)+'<br>사업자등록번호 '+esc(b.bizNo)+(b.bizSale?', 통신판매업 신고 '+esc(b.bizSale):'')+'<br>'+esc(b.bizAddr):'사업자 정보는 판매를 시작할 때 표시합니다.';
+ return'<div class="proto">화면 확인용 시안입니다. 입력한 내용은 이 브라우저에만 저장됩니다.</div><header class="top"><div class="wrap"><a class="brand" href="#home">'+logo+'직공</a><nav class="topnav" aria-label="주 메뉴">'+nav.map(n=>'<a href="#'+n[0]+'"'+(cur===n[0]?' aria-current="page"':'')+'>'+n[1]+'</a>').join('')+'</nav></div></header><main><div class="wrap">'+view+'</div></main><footer><div class="wrap"><p><a href="#guide">직공 소개</a><a href="#help">자주 묻는 질문</a><a href="#terms-use">이용약관</a><a href="#terms-privacy"><b>개인정보 처리방침</b></a></p><p style="margin-top:10px">문의 '+esc(b.phone)+'</p><p style="margin-top:6px">'+biz+'</p><p style="margin-top:14px"><a href="#admin">운영 화면</a></p></div></footer><nav class="tab" aria-label="주 메뉴">'+nav.map((n,i)=>'<a href="#'+n[0]+'"'+(cur===n[0]?' aria-current="page"':'')+'>'+I[ic[i]]+n[1]+'</a>').join('')+'</nav>'+modalHtml()}
+
+const AN=[['admin','요약'],['admin-products','상품'],['admin-members','회원'],['admin-apts','아파트'],['admin-prices','시세 모니터'],['admin-asks','문의'],['admin-faqs','자주 묻는 질문'],['admin-news','공지사항'],['admin-terms','약관·방침'],['admin-alerts','알림'],['admin-site','사이트 설정']];
+const C={
+products:{t:'상품',one:'상품',label:r=>r.name,sub:r=>ST[r.status]+(r.price?', 묶음 '+won(r.price):''),blank:{status:'prep',kg:20,seats:8,price:0,filled:0,maxB:3,origin:'산지 협의 중',when:'산지 협의 중'},
+ f:[{k:'name',l:'상품명',req:1},{k:'photo',l:'사진',t:'image'},{k:'origin',l:'산지',h:'정해지기 전에는 산지 협의 중으로 둡니다'},{k:'when',l:'카드에 보일 일정 문구',h:'예: 산지 협의 중'},{k:'variety',l:'품종'},{k:'farm',l:'농가·등급'},{k:'kg',l:'묶음 무게(kg)',t:'number',h:'고속버스 소화물 한 상자'},{k:'seats',l:'묶음당 구좌(가구) 수',t:'number'},{k:'price',l:'묶음 가격(배송비 포함, 원)',t:'number'},{k:'status',l:'상태',t:'select',o:ST},{k:'desc',l:'상세 설명',t:'textarea'},{k:'store',l:'보관 방법'},{k:'monitor',l:'연결할 시세 품목 이름',h:'시세 목록의 품목 이름과 같게 적으면 서로 이어집니다'},{k:'maxB',l:'최대 묶음 수',t:'number',h:'화면에는 보이지 않습니다'},{k:'filled',l:'채워진 구좌(시안용)',t:'number',h:'상태가 모집 중일 때 선착순 문구가 어떻게 바뀌는지 확인하는 칸입니다'}]},
+apts:{t:'아파트',one:'아파트',label:r=>r.name,sub:r=>r.addr+(r.on?'':', 배달 꺼짐'),blank:{on:true},f:[{k:'name',l:'아파트 이름',req:1},{k:'addr',l:'주소'},{k:'on',l:'가입 화면에 보이기',t:'check'}]},
+prices:{t:'시세 모니터',one:'품목',label:r=>r.name+(r.kind?' '+r.kind:''),sub:r=>(r.rate>0?'▲ ':'▼ ')+Math.abs(r.rate)+'% '+r.basis+(r.hide?', 숨김':''),blank:{basis:'한 달 전',rate:0,hide:false},f:[{k:'name',l:'품목',req:1},{k:'kind',l:'품종·등급'},{k:'rate',l:'등락률(%)',t:'number',h:'내렸으면 음수로 적습니다. 예: -29.1'},{k:'basis',l:'비교 기준',t:'select',o:{'한 달 전':'한 달 전','일주일 전':'일주일 전','평년':'평년'}},{k:'hide',l:'사이트에서 숨기기',t:'check'}]},
+faqs:{t:'자주 묻는 질문',one:'질문',label:r=>r.q,sub:r=>r.cat+(r.on?'':', 숨김'),blank:{cat:'공동구매 방식',on:true},f:[{k:'cat',l:'분류',t:'select',o:{'공동구매 방식':'공동구매 방식','입금·환불':'입금·환불','배달':'배달','회원':'회원'}},{k:'q',l:'질문',req:1},{k:'a',l:'답',t:'textarea'},{k:'on',l:'사이트에 보이기',t:'check'}]},
+news:{t:'공지사항',one:'글',label:r=>r.title,sub:r=>r.date+(r.pin?', 상단 고정':'')+(r.on?'':', 숨김'),blank:{on:true,pin:false,date:today()},f:[{k:'title',l:'제목',req:1},{k:'body',l:'내용',t:'textarea'},{k:'date',l:'날짜',t:'date'},{k:'pin',l:'상단 고정',t:'check'},{k:'on',l:'사이트에 보이기',t:'check'}]},
+terms:{t:'약관·방침',one:'버전',label:r=>(r.kind==='use'?'이용약관':'개인정보 처리방침')+' 버전 '+r.ver,sub:r=>r.date+' 시행',blank:{kind:'use',date:today()},f:[{k:'kind',l:'종류',t:'select',o:{use:'이용약관',privacy:'개인정보 처리방침'}},{k:'ver',l:'버전',req:1},{k:'date',l:'시행일',t:'date'},{k:'body',l:'내용',t:'textarea'}]}};
+function field(f,r){const v=r[f.k],n='name="'+f.k+'"',h=f.h?'<small>'+f.h+'</small>':'';
+ if(f.t==='check')return'<label class="ck"><input type="checkbox" '+n+(v?' checked':'')+'><span>'+f.l+'</span></label>';
+ if(f.t==='select')return'<label class="fl">'+f.l+'<select '+n+'>'+Object.keys(f.o).map(k=>'<option value="'+k+'"'+(k===v?' selected':'')+'>'+f.o[k]+'</option>').join('')+'</select>'+h+'</label>';
+ if(f.t==='textarea')return'<label class="fl">'+f.l+'<textarea '+n+'>'+esc(v)+'</textarea>'+h+'</label>';
+ if(f.t==='image'){const cur=UI.img!==null?UI.img:v;return'<label class="fl">'+f.l+(cur?'<img class="pic" style="border-radius:10px;max-width:320px" src="'+cur+'" alt="">':'')+'<input type="file" accept="image/*" data-img="1">'+(cur?'<button type="button" class="btn sm quiet" data-a="imgClear">사진 지우기</button>':'')+'</label>'}
+ return'<label class="fl">'+f.l+'<input type="'+(f.t||'text')+'" '+n+' value="'+esc(v)+'"'+(f.t==='number'?' step="any"':'')+(f.req?' required':'')+'>'+h+'</label>'}
+function crud(key){const c=C[key],e=UI.edit;
+ if(e&&e.c===key){const r=UI.draft||c.blank;
+  const calc=key==='products'&&r.kg&&r.seats?'<p class="calc">1구좌 '+num(r.kg/r.seats)+'kg'+(r.price?', '+won(Math.round(r.price/r.seats))+(r.price%r.seats?' (묶음 가격이 구좌 수로 나누어떨어지지 않습니다)':''):'')+'</p>':'';
+  return'<h1>'+(e.id?c.one+' 고치기':c.one+' 추가')+'</h1><form class="f" data-f="crud" style="max-width:560px">'+c.f.map(f=>field(f,r)).join('')+calc+'<div class="acts"><button class="btn sm">저장</button><button type="button" class="btn sm quiet" data-a="editCancel">취소</button></div></form>'}
+ const extra=key==='prices'?'<form class="f" data-f="priceDate" style="max-width:320px;margin-bottom:8px"><label class="fl">시세 기준일<input type="date" name="d" value="'+esc(S.site.priceDate)+'"></label><button class="btn sm quiet">기준일 저장</button></form><p class="sub">사이트에는 내린 품목만, 많이 내린 순서로 최대 9개가 보입니다. 모니터와 자동으로 잇는 것은 배포 단계에서 붙입니다.</p>':'';
+ return'<div class="sec-h"><h1>'+c.t+'</h1><button class="btn sm" data-a="editNew" data-id="'+key+'">'+c.one+' 추가</button></div>'+extra+'<div class="list">'+(S[key].length?S[key].map(r=>'<div class="row"><span><span class="t">'+esc(c.label(r))+'</span><br><span class="sub">'+esc(c.sub(r))+'</span></span><span class="acts"><button class="btn sm quiet" data-a="edit" data-id="'+key+':'+r.id+'">고치기</button>'+(UI.del===key+':'+r.id?'<button class="btn sm warn" data-a="delOk" data-id="'+key+':'+r.id+'">정말 삭제</button>':'<button class="btn sm quiet" data-a="del" data-id="'+key+':'+r.id+'">삭제</button>')+'</span></div>').join(''):'<p class="sub" style="padding:16px 0">아직 없습니다.</p>')+'</div>'}
+const A={
+admin(){const un=S.asks.filter(a=>!a.reply).length,days=Math.floor((Date.now()-new Date(S.site.priceDate))/864e5);const todo=[];
+ if(un)todo.push('<a href="#admin-asks">답글을 기다리는 문의 '+un+'건</a>');
+ if(days>7)todo.push('<a href="#admin-prices">시세 기준일이 '+days+'일 지났습니다</a>');
+ if(S.apreq.length)todo.push('<a href="#admin-apts">새 단지 신청 '+S.apreq.length+'건</a>');
+ if(!S.site.bizName)todo.push('<a href="#admin-site">하단 사업자 정보가 비어 있습니다</a>');
+ return'<h1>요약</h1><div class="cards"><div class="box"><span class="sub">회원</span><b>'+S.members.length+'</b></div><div class="box"><span class="sub">알림 신청</span><b>'+S.alerts.length+'</b></div><div class="box"><span class="sub">답글 대기 문의</span><b>'+un+'</b></div></div><h2 style="margin-top:24px">할 일</h2>'+(todo.length?'<div class="list">'+todo.map(t=>'<div class="row">'+t+'</div>').join('')+'</div>':'<p class="sub" style="margin-top:8px">지금 손볼 것이 없습니다.</p>')
+ +'<h2 style="margin-top:32px">상품별 알림 신청</h2><div class="list">'+S.products.map(p=>'<div class="row"><span class="t">'+esc(p.name)+'</span><span>'+S.alerts.filter(a=>a.p===p.id).length+'명</span></div>').join('')+'</div>'},
+members(){const q=UI.q.trim();const l=S.members.filter(m=>!q||(m.name+m.phone+m.dong+m.ho).includes(q));
+ return'<h1>회원</h1><label class="fl" style="max-width:360px;margin-top:14px">이름, 번호, 동·호수로 찾기<input type="text" id="mq" value="'+esc(UI.q)+'"></label><div class="tw"><table><thead><tr><th>이름</th><th>휴대폰</th><th>아파트</th><th>동·호수</th><th>가입</th><th>알림 동의</th><th>상태</th><th></th></tr></thead><tbody>'+l.map(m=>{const a=by(S.apts,m.apt);return'<tr><td>'+esc(m.name)+'</td><td>'+esc(m.phone)+'</td><td>'+esc(a?a.name:'')+'</td><td>'+esc(m.dong)+'동 '+esc(m.ho)+'호</td><td>'+esc(m.joined)+' '+(m.via==='kakao'?'카카오':'네이버')+'</td><td>'+(m.mk?'동의':'안 함')+'</td><td>'+(m.state==='ok'?'정상':'이용 정지')+'</td><td><button class="btn sm quiet" data-a="mToggle" data-id="'+m.id+'">'+(m.state==='ok'?'정지':'정지 풀기')+'</button></td></tr>'}).join('')+'</tbody></table></div><p class="note">같은 사람이 네이버와 카카오로 따로 가입한 계정을 합치는 기능은 나중에 붙입니다.</p>'},
+asks(){const l=[...S.asks].sort((a,b)=>(!!a.reply-!!b.reply)||b.at.localeCompare(a.at));
+ return'<h1>문의</h1><p class="sub" style="margin-top:6px">답글을 달면 회원의 내 정보에 보입니다. 이후 처리는 카카오톡으로 연락합니다.</p>'+(l.length?l.map(q=>{const m=by(S.members,q.m);return'<div class="box" style="margin-top:14px"><p class="sub">'+esc(q.at)+', '+esc(q.type)+', '+esc(m?m.name+' '+m.phone:'탈퇴한 회원')+'</p><p style="margin:8px 0 12px">'+esc(q.body)+'</p><form class="f" data-f="reply" data-id="'+q.id+'" style="margin-top:0"><label class="fl">답글<textarea name="reply" style="min-height:90px">'+esc(q.reply)+'</textarea></label><div class="acts"><button class="btn sm">'+(q.reply?'답글 고치기':'답글 달기')+'</button><span class="chip '+(q.reply?'':'gray')+'">'+(q.reply?'답변 완료':'접수')+'</span></div></form></div>'}).join(''):'<p class="sub" style="margin-top:14px">들어온 문의가 없습니다.</p>')},
+alerts(){return'<h1>알림</h1><p class="sub" style="margin-top:6px">공동구매를 열 때 신청한 회원에게 한 번 알립니다. 지금은 연락처를 복사해 직접 안내하고, 카카오 알림톡 자동 발송은 다음 단계에서 붙입니다.</p>'+S.products.map(p=>{const l=S.alerts.filter(a=>a.p===p.id).map(a=>by(S.members,a.m)).filter(Boolean);return'<div class="box" style="margin-top:14px"><div class="sec-h"><h3>'+esc(p.name)+' '+l.length+'명</h3>'+(l.length?'<button class="btn sm quiet" data-a="copyPhones" data-id="'+p.id+'">연락처 복사</button>':'')+'</div>'+(l.length?'<p class="sub">'+l.map(m=>esc(m.name)+' '+esc(m.phone)+(m.mk?'':' (알림 동의 안 함)')).join('<br>')+'</p>':'<p class="sub">신청한 회원이 없습니다.</p>')+'</div>'}).join('')},
+site(){const s=S.site,t=(k,l,ty)=>'<label class="fl">'+l+'<input type="'+(ty||'text')+'" name="'+k+'" value="'+esc(s[k])+'"></label>';
+ return'<h1>사이트 설정</h1><form class="f" data-f="site" style="max-width:560px">'+t('phone','문의 전화','tel')+'<label class="fl">로고'+(s.logo?'<img src="'+s.logo+'" alt="" style="width:64px;height:64px;border-radius:50%;object-fit:cover">':'')+'<input type="file" accept="image/*" data-logo="1"><small>올리지 않으면 임시 표시가 보입니다</small></label><label class="ck"><input type="checkbox" name="popupOn"'+(s.popupOn?' checked':'')+'><span>첫 화면에 수요조사 결과 팝업 띄우기</span></label><h2 style="margin-top:10px">하단 사업자 정보</h2>'+t('bizName','상호')+t('bizCeo','대표자')+t('bizNo','사업자등록번호')+t('bizSale','통신판매업 신고번호')+t('bizAddr','주소')+'<button class="btn sm">설정 저장</button></form><h2 style="margin-top:36px">시안 데이터</h2><p class="sub" style="margin:6px 0 12px">이 브라우저에 저장된 내용을 지우고 처음 상태로 돌립니다.</p>'+(UI.del==='reset'?'<button class="btn sm warn" data-a="resetOk">정말 처음으로 돌리기</button>':'<button class="btn sm quiet" data-a="reset">처음 상태로 돌리기</button>')},
+apts(){return crud('apts')+(S.apreq.length?'<h2 style="margin-top:32px">우리 단지도 열어 주세요 신청</h2><div class="list">'+S.apreq.map(r=>'<div class="row"><span class="t">'+esc(r.name)+'</span><span class="sub">'+esc(r.phone)+', '+esc(r.at)+'</span></div>').join('')+'</div>':'')}};
+function adminShell(h){const k=h.replace('admin-','');let v;
+ if(h==='admin')v=A.admin();else if(A[k])v=A[k]();else if(C[k])v=crud(k);else v=A.admin();
+ return'<div class="proto">운영 화면 시안입니다. 실제 서비스에서는 관리자 로그인 뒤에만 열립니다.</div><header class="top"><div class="wrap"><a class="brand" href="#admin"><i></i>직공 운영</a><a class="toplog" href="#home">사이트 보기</a></div></header><main><div class="adm"><nav class="adm-nav" aria-label="운영 메뉴"><select id="anav" aria-label="운영 메뉴">'+AN.map(n=>'<option value="'+n[0]+'"'+(n[0]===h?' selected':'')+'>'+n[1]+'</option>').join('')+'</select><ul>'+AN.map(n=>'<li><a href="#'+n[0]+'"'+(n[0]===h?' aria-current="page"':'')+'>'+n[1]+'</a></li>').join('')+'</ul></nav><div>'+v+'</div></div></main>'}
+let last='';
+function render(){const h=location.hash.slice(1)||'home';const app=document.getElementById('app');
+ if(h!==last){UI.edit=null;UI.draft=null;UI.del=null;UI.err='';UI.img=null;if(!h.startsWith('admin')&&last.startsWith('admin'))UI.q=''}
+ if(h.startsWith('admin'))app.innerHTML=adminShell(h);
+ else{let v,cur=h;
+  if(h==='home'){v=V.home();if(S.site.popupOn&&!S.seenPopup&&!UI.modal){UI.modal={t:'popup'};S.seenPopup=true;save()}}
+  else if(h.startsWith('p-')){v=V.product(h.slice(2));cur='shop'}
+  else if(h.startsWith('n-')){v=V.newsOne(h.slice(2));cur='news'}
+  else if(h==='terms-use')v=V.terms('use');else if(h==='terms-privacy')v=V.terms('privacy');
+  else if(h==='join'){v=V.join();cur='login'}
+  else if(h==='me'||h==='login'){v=S.me?V.me():V.login();cur=S.me?'me':'login'}
+  else if(V[h]&&!['product','newsOne','terms','needLogin','nf'].includes(h))v=V[h]();else v=V.nf();
+  app.innerHTML=siteShell(v,cur)}
+ if(h!==last){window.scrollTo(0,0);last=h}}
+function alertOn(pid){const m=me();if(!m){UI.after='p-'+pid;toast('로그인하면 알림을 신청할 수 있습니다');return go('login')}
+ if(!m.mk){UI.modal={t:'consent',id:pid};return render()}
+ if(!hasAlert(pid))S.alerts.push({id:uid(),m:m.id,p:pid,at:today()});save();toast('알림을 신청했습니다');render()}
+const ACT={
+closeModal(){UI.modal=null;render()},
+alertOn(id){alertOn(id)},
+alertOff(id){S.alerts=S.alerts.filter(a=>!(a.m===S.me&&a.p===id));save();toast('알림 신청을 취소했습니다');render()},
+consentOk(id){const m=me();m.mk=true;m.mkAt=today();UI.modal=null;alertOn(id)},
+order(){UI.modal={t:'order'};render()},
+social(id){const ex=S.members.find(m=>m.sid===id+'-me');if(ex){S.me=ex.id;save();toast('로그인했습니다');return go(UI.after||'home')}UI.pend=id;go('join')},
+aptReq(id,b,e){e.preventDefault();grab();UI.modal={t:'apt'};render()},
+termsView(id,b,e){e.preventDefault();grab();UI.modal={t:'terms',id:id};render()},
+logout(){S.me=null;save();toast('로그아웃했습니다');go('home')},
+leaveAsk(){UI.modal={t:'leave'};render()},
+leaveOk(){const id=S.me;S.members=S.members.filter(m=>m.id!==id);S.alerts=S.alerts.filter(a=>a.m!==id);S.me=null;UI.modal=null;save();toast('탈퇴했습니다');go('home')},
+editNew(id){UI.edit={c:id,id:null};UI.draft=Object.assign({},C[id].blank);UI.img=null;render();window.scrollTo(0,0)},
+edit(id){const p=id.split(':');UI.edit={c:p[0],id:p[1]};UI.draft=Object.assign({},by(S[p[0]],p[1]));UI.img=null;render();window.scrollTo(0,0)},
+editCancel(){UI.edit=null;UI.draft=null;UI.img=null;render()},
+del(id){UI.del=id;render()},
+delOk(id){const p=id.split(':');S[p[0]]=S[p[0]].filter(r=>r.id!==p[1]);UI.del=null;save();toast('삭제했습니다');render()},
+imgClear(id,b){const f=b.closest('form'),d={};new FormData(f).forEach((v,k)=>{if(typeof v==='string')d[k]=v});keepDraft(d);UI.img='';render()},
+mToggle(id){const m=by(S.members,id);m.state=m.state==='ok'?'stop':'ok';save();render()},
+copyPhones(id){const t=S.alerts.filter(a=>a.p===id).map(a=>by(S.members,a.m)).filter(Boolean).map(m=>m.phone).join('\n');
+ try{navigator.clipboard.writeText(t).then(()=>toast('연락처를 복사했습니다'),()=>toast('복사하지 못했습니다. 목록을 직접 선택해 주세요'))}catch(e){toast('복사하지 못했습니다. 목록을 직접 선택해 주세요')}},
+reset(){UI.del='reset';render()},
+resetOk(){S=seed();UI.del=null;save();toast('처음 상태로 돌렸습니다');go('admin')}};
+const FORM={
+join(d){const ph=d.phone.replace(/[^0-9]/g,'');if(ph.length<10||ph.length>11){UI.jd=d;UI.err='휴대폰 번호를 다시 확인해 주세요. 예: 010-1234-5678';return render()}
+ const m={id:uid(),sid:UI.pend+'-me',name:d.name.trim(),phone:d.phone.trim(),apt:d.apt,dong:d.dong.trim(),ho:d.ho.trim(),via:UI.pend,mk:!!d.mk,mkAt:d.mk?today():'',agreed:{use:today(),privacy:today()},joined:today(),state:'ok',memo:''};
+ S.members.push(m);S.me=m.id;UI.pend=null;UI.jd={};UI.err='';save();toast('가입했습니다');const a=UI.after;UI.after=null;go(a||'home')},
+meSave(d){const m=me();Object.assign(m,{phone:d.phone.trim(),apt:d.apt,dong:d.dong.trim(),ho:d.ho.trim()});if(!!d.mk!==m.mk){m.mk=!!d.mk;m.mkAt=today()}save();toast('내 정보를 저장했습니다');render()},
+ask(d){if(!d.body.trim()){UI.err='문의 내용을 적어 주세요.';return render()}S.asks.push({id:uid(),m:S.me,type:d.type,body:d.body.trim(),at:today(),reply:''});UI.err='';save();toast('문의를 보냈습니다');go('me')},
+aptReq(d){S.apreq.push({id:uid(),name:d.name.trim(),phone:d.phone.trim(),at:today()});UI.modal=null;save();toast('신청했습니다. 단지가 열리면 연락드립니다');render()},
+reply(d,f){const q=by(S.asks,f.dataset.id);q.reply=d.reply.trim();save();toast('답글을 저장했습니다');render()},
+priceDate(d){S.site.priceDate=d.d;save();toast('기준일을 저장했습니다');render()},
+site(d){const keep=S.site.logo;Object.assign(S.site,d,{popupOn:!!d.popupOn,logo:keep,priceDate:S.site.priceDate});save();toast('설정을 저장했습니다');render()},
+crud(d){const e=UI.edit,c=C[e.c];const r=e.id?by(S[e.c],e.id):Object.assign({id:uid()},c.blank);
+ c.f.forEach(f=>{if(f.t==='check')r[f.k]=!!d[f.k];else if(f.t==='number')r[f.k]=parseFloat(d[f.k])||0;else if(f.t==='image'){if(UI.img!==null)r[f.k]=UI.img;else if(r[f.k]===undefined)r[f.k]=''}else r[f.k]=(d[f.k]||'').trim()});
+ if(!e.id)S[e.c].push(r);UI.edit=null;UI.draft=null;UI.img=null;save();toast('저장했습니다');render()}};
+function grab(){const f=document.querySelector('form[data-f="join"]');if(!f)return;const d={};new FormData(f).forEach((v,k)=>{if(typeof v==='string')d[k]=v});UI.jd=d}
+function shrink(file,max,cb){const rd=new FileReader();rd.onload=()=>{const im=new Image();im.onload=()=>{const k=Math.min(1,max/Math.max(im.width,im.height));const c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);cb(c.toDataURL('image/jpeg',.82))};im.src=rd.result};rd.readAsDataURL(file)}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&ACT[b.dataset.a]){if(b.tagName==='A'&&b.dataset.a==='closeModal'){UI.modal=null;return}ACT[b.dataset.a](b.dataset.id,b,e)}});
+document.addEventListener('submit',e=>{e.preventDefault();const f=e.target,d={};new FormData(f).forEach((v,k)=>{if(typeof v==='string')d[k]=v});if(FORM[f.dataset.f])FORM[f.dataset.f](d,f)});
+document.addEventListener('change',e=>{const t=e.target;
+ if(t.id==='anav')go(t.value);
+ if(t.dataset.img&&t.files[0])shrink(t.files[0],900,u=>{UI.img=u;const f=t.closest('form'),d={};new FormData(f).forEach((v,k)=>{if(typeof v==='string')d[k]=v});keepDraft(d);render()});
+ if(t.dataset.logo&&t.files[0])shrink(t.files[0],240,u=>{S.site.logo=u;save();toast('로고를 바꿨습니다');render()})});
+function keepDraft(d){const e=UI.edit;if(!e||!UI.draft)return;const c=C[e.c];const r=UI.draft;c.f.forEach(f=>{if(f.t==='check')r[f.k]=!!d[f.k];else if(f.t==='number')r[f.k]=parseFloat(d[f.k])||0;else if(f.t!=='image')r[f.k]=d[f.k]||''})}
+document.addEventListener('input',e=>{if(e.target.id==='mq'){UI.q=e.target.value;render();const i=document.getElementById('mq');i.focus();i.setSelectionRange(UI.q.length,UI.q.length)}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.modal){UI.modal=null;render()}});
+window.addEventListener('hashchange',render);
+
+/* ---- 피그마 '직공 홈페이지 리디자인' 기준으로 다시 그리는 부분 ---- */
+const LOGO='assets/logo.webp',HARVEST='assets/harvest.jpg';
+const IC={arrow:'<path d="M5 12h14"/><path d="m13 6 6 6-6 6"/>',bell:'<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/>',box:'<path d="m4 7 8-4 8 4-8 4-8-4Z"/><path d="M4 7v10l8 4 8-4V7M12 11v10"/>',calendar:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',check:'<path d="m5 12 4 4L19 6"/>',chevron:'<path d="m9 18 6-6-6-6"/>',close:'<path d="m6 6 12 12M18 6 6 18"/>',menu:'<path d="M4 7h16M4 12h16M4 17h16"/>',monitor:'<path d="M3 17 8 12l4 3 7-8"/><path d="M15 7h4v4"/>',pin:'<path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"/><circle cx="12" cy="10" r="2.5"/>',truck:'<path d="M3 6h11v11H3zM14 10h4l3 3v4h-7z"/><circle cx="7" cy="18" r="2"/><circle cx="18" cy="18" r="2"/>'};
+function icon(n,s){s=s||20;return'<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">'+IC[n]+'</svg>'}
+const CROP={apple:'product-apple',goguma:'product-potato',dangam:'product-persimmon'};
+const dots=d=>{const p=String(d||'').split('-');return p.length===3?p[0]+'. '+(+p[1])+'. '+(+p[2])+'.':''};
+const prodName=id=>id==='all'?'새 공동구매':((by(S.products,id)||{}).name||'');
+UI.menu=false;
+
+function priceRows(list){
+ if(!list.length)return'<div class="price-list"><div class="price-row" style="grid-template-columns:1fr"><div class="price-name"><b style="font-size:15px;font-weight:500">이번 주는 크게 떨어진 품목이 없습니다.</b></div></div></div>';
+ const max=Math.abs(list[0].rate);
+ return'<div class="price-list">'+list.map((p,i)=>{const pr=S.products.find(x=>x.monitor&&x.monitor===p.name&&x.status!=='end');
+  const link=pr?(pr.status==='open'?'<button data-a="goProducts">공동구매 중</button>':'<button data-a="alertOn" data-id="'+pr.id+'">공동구매 준비 중</button>'):'';
+  return'<div class="price-row"><span class="price-rank">'+String(i+1).padStart(2,'0')+'</span><div class="price-name"><b>'+esc(p.name)+'</b>'+(p.kind?'<small>'+esc(p.kind)+'</small>':'')+link+'</div><div class="price-bar"><span style="width:'+Math.round(Math.abs(p.rate)/max*100)+'%"></span></div><div class="price-value"><small>'+esc(p.basis)+'보다</small><b>↓ '+Math.abs(p.rate).toFixed(1)+'%</b></div></div>'}).join('')+'</div>'}
+const FOOTNOTE='<div class="market-card-foot">'+icon('monitor',18)+'<p>한 달 전 −20%, 일주일 전 −12%, 평년 −15% 중 하나 이상 하락한 상온 품목을 보여드립니다.</p></div>';
+
+function ticket(p){const st=p.status,hot=st==='soon'||st==='open',sm=st==='open'?seatMsg(p):null;
+ const badge=st==='open'?sm.t:st==='soon'?'곧 오픈':st==='closed'?'이번 회차 마감':'준비 중';
+ const vr=[p.variety,p.farm].filter(Boolean).join(' · ');
+ const per=p.price&&p.seats?won(Math.round(p.price/p.seats)):'';
+ const meta=st==='open'&&per?num(p.kg/p.seats)+'kg '+per+', 금요일 오전 10시 마감':(p.when||'산지 협의 중');
+ const btn=st==='open'&&!sm.full?'<button data-a="order" data-id="'+p.id+'">공동구매 참여 '+icon('arrow',18)+'</button>':'<button data-a="alertOn" data-id="'+p.id+'">'+(st==='closed'||(sm&&sm.full)?'다음 회차 알림 신청 ':'오픈 알림 신청 ')+icon('arrow',18)+'</button>';
+ return'<article class="product-card'+(hot?' featured':'')+'"><div class="product-image '+(p.photo?'own':(CROP[p.id]||''))+'"><img src="'+(p.photo||HARVEST)+'" alt="'+esc(p.name)+' 산지 농산물"><span class="'+(hot?'soon':'')+'">'+esc(badge)+'</span></div><div class="product-content"><p class="product-variety">'+esc(vr)+'</p><h3><a href="#p-'+p.id+'">'+esc(p.name)+'</a></h3><p>'+esc(p.desc)+'</p><div class="product-meta"><span>'+icon('calendar',17)+' '+esc(meta)+'</span></div>'+btn+'</div></article>'}
+
+const STEPS=[['monitor','시세를 살펴요','가격이 크게 떨어진 제철 농산물을 매주 확인합니다.'],['bell','알림 받고 참여해요','공동구매가 열리면 알림을 받고 필요한 만큼 참여합니다.'],['box','이웃과 나눠요','한 상자를 함께 주문해 산지 운송비와 포장 부담을 낮춥니다.'],['truck','문 앞에서 만나요','토요일, 직공이 우리 아파트 문 앞까지 직접 가져갑니다.']];
+V.home=function(){const ns=liveNews().slice(0,2);
+ return'<section class="hero"><div class="hero-media" aria-hidden="true"><img src="'+HARVEST+'" alt=""></div><div class="hero-overlay"></div><div class="hero-content page-width"><div class="hero-copy"><span class="eyebrow"><span class="eyebrow-dot"></span> 이웃과 함께하는 산지 직거래</span><h1>가격이 내려간 농산물,<br><em>가치는 그대로</em> 전해요.</h1><p>농가의 정성은 제값으로, 우리 식탁에는 신선하게.<br class="desktop-break"> 한 상자를 이웃과 나누면 모두에게 좋은 거래가 시작됩니다.</p><div class="hero-buttons"><a class="button primary" href="#products">공동구매 둘러보기 '+icon('arrow')+'</a><a class="button secondary" href="#how">직공은 어떻게 다른가요?</a></div></div><div class="hero-trust"><div>'+icon('pin')+'<span><b>우리 단지에서</b><small>달빛마을 3단지부터</small></span></div><div>'+icon('truck')+'<span><b>문 앞까지</b><small>매주 토요일 배달</small></span></div><div>'+icon('check')+'<span><b>모이지 않으면</b><small>전액 환불</small></span></div></div></div></section>'
+ +'<section class="intro-strip" aria-label="직공 소개"><div class="page-width intro-inner"><p><b>직공</b>은 도매 가격이 크게 떨어진 농산물을 찾아<br>아파트 이웃과 함께 나누는 공동구매입니다.</p><div class="intro-tags"><span>농가와 직접 연결</span><span>필요한 만큼 소분</span><span>우리 단지 문 앞 배달</span></div></div></section>'
+ +'<section class="section market-section" id="market"><div class="page-width"><div class="section-heading split"><div><span class="kicker">이번 주 농산물 시세</span><h2>많이 내려간 품목을<br>한눈에 살펴보세요.</h2></div><div class="heading-note"><span>'+dots(S.site.priceDate)+' 기준</span><p>가격이 아닌 하락 폭만 보여드려요.<br>출처: KAMIS 농산물유통정보</p></div></div><div class="market-card"><div class="market-card-head"><div><span class="live-badge">WEEKLY DROP</span><h3>이번 주 하락 폭이 큰 농산물</h3></div><a href="#prices" aria-label="전체 시세 보기">전체 시세 보기 '+icon('arrow',17)+'</a></div>'+priceRows(shown().slice(0,5))+FOOTNOTE+'</div></div></section>'
+ +'<section class="section products-section" id="products"><div class="page-width"><div class="section-heading center"><span class="kicker">곧 만나요</span><h2>우리 단지에 찾아올 농산물</h2><p>직공이 산지와 품질을 꼼꼼히 확인하고 있어요.<br>오픈 알림을 신청하면 가장 먼저 알려드릴게요.</p></div><div class="product-grid">'+liveProducts().map(ticket).join('')+'</div><p class="product-caption">알림 신청은 주문이 아니며, 공동구매가 열릴 때 한 번만 안내해 드립니다.</p></div></section>'
+ +'<section class="section process-section" id="how"><div class="page-width"><div class="section-heading"><span class="kicker light">직공 이용 방법</span><h2>한 상자가 우리 집에<br>도착하기까지</h2><p>복잡한 과정은 직공이 맡을게요.<br>이웃은 필요한 만큼 참여하고 편하게 받으세요.</p></div><div class="steps-grid">'+STEPS.map((s,i)=>'<article class="step-card"><div class="step-icon">'+icon(s[0],29)+'</div><span>0'+(i+1)+'</span><h3>'+s[1]+'</h3><p>'+s[2]+'</p></article>').join('')+'</div><div class="promise"><div class="promise-mark">'+icon('check',29)+'</div><div><span>직공의 약속</span><h3>필요한 가구가 모이지 않으면 전액 돌려드려요.</h3></div><p>공동구매 마감 전에는 언제든 취소할 수 있어요.<br>성사 여부와 배달 일정도 투명하게 알려드립니다.</p></div></div></section>'
+ +'<section class="section local-section"><div class="page-width local-grid"><div class="local-copy"><span class="kicker">달빛마을 3단지에서 시작합니다</span><h2>우리 동네의 작은 선택이<br>농가의 큰 힘이 됩니다.</h2><p>멀리 있는 거대한 유통보다, 얼굴을 알 수 있는 농가와 가까운 이웃을 연결합니다. 직공은 한 단지씩 천천히, 믿을 수 있는 공동구매를 만들어가겠습니다.</p><div class="survey-result"><div><b>71%</b><span>공동구매<br>참여 의향</span></div><div><b>79%</b><span>문 앞 배달<br>선호</span></div><div><b>75%</b><span>당일 사진 있으면<br>주문</span></div></div><small>2026년 11월 달빛마을 3단지 주민 수요조사 결과</small></div><div class="local-visual"><div class="local-circle"><img src="'+LOGO+'" alt="직공 직거래 공동구매"></div><span class="route-line one"></span><span class="route-line two"></span><div class="location-chip">'+icon('pin',18)+'<span><b>첫 번째 직공 동네</b>고양 화정 달빛마을 3단지</span></div></div></div></section>'
+ +'<section class="section news-section" id="news"><div class="page-width"><div class="section-heading split"><div><span class="kicker">직공 소식</span><h2>준비하는 과정도<br>솔직하게 전할게요.</h2></div><a href="#news-all">소식 전체 보기 '+icon('arrow',18)+'</a></div><div class="news-list">'+ns.map(n=>'<a href="#n-'+n.id+'"><span class="news-label'+(n.pin?'':' muted')+'">'+(n.pin?'공지':'소식')+'</span><div><h3>'+esc(n.title)+'</h3><p>'+esc(n.body.split('\n')[0].slice(0,60))+'</p></div><time>'+dots(n.date).replace(/\.$/,'')+'</time>'+icon('chevron')+'</a>').join('')+'</div></div></section>'
+ +'<section class="cta-section"><div class="page-width cta-inner"><div><span>다음 공동구매 소식이 궁금하신가요?</span><h2>좋은 농산물이 찾아오면<br>가장 먼저 알려드릴게요.</h2></div><button class="button light-button" data-a="alertOn" data-id="all">'+icon('bell')+' 오픈 알림 신청하기</button></div></section>'};
+V.prices=function(){return'<section><p class="back"><a href="#market">홈으로</a></p><span class="kicker" style="margin-top:22px">이번 주 농산물 시세</span><h1>하락 폭이 큰 농산물</h1><p class="sub" style="margin-top:12px">'+dots(S.site.priceDate)+' 기준입니다. 가격이 아닌 하락 폭만 보여드려요.</p><div class="market-card" style="margin-top:26px">'+priceRows(shown())+FOOTNOTE+'</div><p class="note">품목마다 가장 많이 내린 등급 하나를 골랐습니다. 출처: KAMIS 농산물유통정보(한국농수산식품유통공사) 서울 도매가</p></section>'};
+V.product=function(id){const p=by(S.products,id);if(!p||p.status==='end')return V.nf();const sm=p.status==='open'?seatMsg(p):null;
+ const info=[['산지',p.origin||'산지 협의 중'],['품종',p.variety],['등급',p.farm],['보관',p.store],['나누는 방식',p.kg&&p.seats?num(p.kg)+'kg 한 상자를 '+p.seats+'가구가 나눠요':''],['일정',p.status==='open'?'금요일 오전 10시 마감, 토요일 문 앞 배달':(p.when||'산지 협의 중')]].filter(x=>x[1]);
+ return'<section><p class="back"><a href="#products">공동구매로 돌아가기</a></p><img class="pd-pic" style="margin-top:18px;'+(p.photo?'':'object-position:'+({apple:'67% 43%',goguma:'79% 82%',dangam:'92% 54%'}[p.id]||'center'))+'" src="'+(p.photo||HARVEST)+'" alt="'+esc(p.name)+' 산지 농산물"><p style="margin-top:24px"><span class="chip'+(sm?'':' gray')+'">'+esc(sm?sm.t:ST[p.status])+'</span></p><h1 style="margin-top:10px">'+esc(p.name)+'</h1><p class="prose">'+esc(p.desc)+'</p><dl class="kv" style="margin-top:22px">'+info.map(x=>'<dt>'+x[0]+'</dt><dd>'+esc(x[1])+'</dd>').join('')+'</dl>'+(p.status==='open'&&!sm.full?'<button class="btn" data-a="order" data-id="'+p.id+'">공동구매 참여</button>':'<button class="btn" data-a="alertOn" data-id="'+p.id+'">오픈 알림 신청</button>')+'<p class="note">알림 신청은 주문이 아니며, 공동구매가 열릴 때 한 번만 안내해 드립니다.</p></section><section><div class="box"><p><b>필요한 가구가 모이지 않으면 전액 돌려드려요.</b></p><p class="sub" style="margin-top:6px">받은 상품에 문제가 있으면 3일 안에 문의해 주세요.</p></div></section>'};
+
+function modalHtml(){const m=UI.modal;if(!m)return'';let c='';const x='<button class="modal-close" data-a="closeModal" aria-label="닫기">'+icon('close')+'</button>';
+ if(m.t==='alert'){const me_=me();c=x+'<div class="modal-icon">'+icon('bell',27)+'</div><span class="modal-kicker">오픈 알림 신청</span><h2 id="modal-title">'+esc(prodName(m.id))+' 소식,<br>놓치지 않게 알려드릴게요.</h2><p>휴대폰 번호를 남기면 공동구매가 열릴 때 한 번만 안내해 드립니다.</p><form data-f="alert" data-id="'+m.id+'"><label>휴대폰 번호<input type="tel" name="phone" placeholder="010-1234-5678" required value="'+esc(m.phone||(me_?me_.phone:''))+'"></label>'+(UI.err?'<p class="err" role="alert">'+UI.err+'</p>':'')+'<label class="consent"><input type="checkbox" name="ok" required><span>공동구매 오픈 알림 수신에 동의합니다. (필수)</span></label><button class="button primary" type="submit">알림 신청하기</button></form><small>알림 발송 후 신청 정보는 안전하게 파기합니다.</small>'}
+ else if(m.t==='alertDone')c=x+'<div class="modal-success"><div class="success-check">'+icon('check',35)+'</div><span class="modal-kicker">신청 완료</span><h2 id="modal-title">좋은 소식으로<br>다시 만나요.</h2><p>'+esc(prodName(m.id))+' 공동구매가 열리면 가장 먼저 알려드릴게요.</p><button class="button primary" data-a="closeModal">확인</button></div>';
+ else{let b='';
+  if(m.t==='popup')b='<span class="modal-kicker">수요조사 결과</span><h2 id="modal-title" style="margin-top:10px">달빛마을 3단지 주민 여러분이 답해 주셨습니다.</h2><div style="margin-top:16px"><div class="stat"><b>71%</b><span>산지 직거래 공동구매를 살 의향이 있다</span></div><div class="stat"><b>79%</b><span>문 앞에 두면 언제든 좋다</span></div><div class="stat"><b>75%</b><span>수확한 날 사진이 있으면 주문하겠다</span></div><div class="stat"><b>46%</b><span>품질을 미리 볼 수 없어 망설인다</span></div></div><div style="display:grid;gap:10px;margin-top:22px"><a class="btn line" href="#n-n1" data-a="closeModal">결과 자세히 보기</a><button class="btn" data-a="closeModal">닫기</button></div>';
+  if(m.t==='order')b='<h2 id="modal-title">주문은 공동구매가 열리면 시작합니다.</h2><p class="sub" style="margin:12px 0 22px">지금은 화면만 미리 보는 시안입니다. 실제 주문과 입금 안내는 다음 단계에서 붙입니다.</p><button class="btn" data-a="closeModal">확인</button>';
+  if(m.t==='leave')b='<h2 id="modal-title">회원 탈퇴</h2><p class="sub" style="margin:12px 0 22px">내 정보와 문의 내역이 지워집니다. 계속할까요?</p><div style="display:grid;gap:10px"><button class="btn warn" data-a="leaveOk">탈퇴하기</button><button class="btn quiet" data-a="closeModal">취소</button></div>';
+  if(m.t==='apt')b='<h2 id="modal-title">우리 단지도 열어 주세요</h2><p class="sub" style="margin-top:10px">단지가 열리면 연락드립니다.</p><form class="f" data-f="aptReq"><label class="fl">아파트 이름<input type="text" name="name" required></label><label class="fl">연락처<input type="tel" name="phone" required></label><button class="btn">신청하기</button></form>';
+  if(m.t==='terms'){const t=S.terms.filter(z=>z.kind===m.id).sort((a,b2)=>b2.date.localeCompare(a.date))[0];b='<h2 id="modal-title">'+(m.id==='use'?'이용약관':'개인정보 처리방침')+'</h2><p class="prose" style="font-size:13px">'+esc(t?t.body:'준비 중입니다.')+'</p><p style="margin-top:22px"><button class="btn" data-a="closeModal">닫기</button></p>'}
+  c=x+'<div class="inner">'+b+'</div>'}
+ return'<div class="modal-backdrop" data-a="backdrop"><div class="alert-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">'+c+'</div></div>'}
+
+function headerHtml(admin){const logged=!!S.me;
+ if(admin)return'<header class="site-header"><div class="header-inner"><a class="brand" href="#admin" aria-label="직공 운영"><img src="'+(S.site.logo||LOGO)+'" alt=""><span>직공</span><small>운영 화면</small></a><div class="header-actions" style="margin-left:auto"><a class="text-button" style="display:block" href="#home">사이트 보기</a></div></div></header>';
+ return'<header class="site-header"><a class="skip-link" href="#" data-a="skip">본문 바로가기</a><div class="header-inner"><a class="brand" href="#home" aria-label="직공 홈"><img src="'+(S.site.logo||LOGO)+'" alt=""><span>직공</span><small>직거래 공동구매</small></a><nav class="main-nav'+(UI.menu?' is-open':'')+'" aria-label="주 메뉴"><a href="#market">시세 소식</a><a href="#products">공동구매</a><a href="#how">이용 안내</a><a href="#news">직공 소식</a><a class="only-mobile" href="#help">자주 묻는 질문</a><a class="only-mobile" href="#'+(logged?'me':'login')+'">'+(logged?'내 정보':'로그인')+'</a></nav><div class="header-actions"><a class="text-button" href="#'+(logged?'me':'login')+'">'+(logged?'내 정보':'로그인')+'</a><button class="header-cta" data-a="alertOn" data-id="all">오픈 알림 받기</button><button class="menu-button" data-a="menu" aria-label="메뉴 열기" aria-expanded="'+UI.menu+'">'+icon(UI.menu?'close':'menu',25)+'</button></div></div></header>'}
+function footerHtml(){const b=S.site;const biz=b.bizName?esc(b.bizName)+' 대표 '+esc(b.bizCeo)+', 사업자등록번호 '+esc(b.bizNo)+(b.bizSale?', 통신판매업 신고 '+esc(b.bizSale):'')+(b.bizAddr?', '+esc(b.bizAddr):''):'사업자 정보는 공동구매 판매 시작 시 공개됩니다.';
+ return'<footer><div class="page-width footer-top"><div class="footer-brand"><img src="'+(b.logo||LOGO)+'" alt=""><div><b>직공</b><span>직거래 공동구매</span></div></div><div class="footer-links"><a href="#how">직공 소개</a><a href="#how">이용 안내</a><a href="#news-all">공지사항</a><a href="#help">자주 묻는 질문</a></div></div><div class="page-width footer-bottom"><div><p>문의 <a href="tel:'+esc(b.phone.replace(/[^0-9]/g,''))+'">'+esc(b.phone)+'</a></p><p>'+biz+'</p><p class="copyright">© 2026 JIKGONG. All rights reserved.</p></div><div><div class="legal"><a href="#terms-use">이용약관</a><a href="#terms-privacy">개인정보 처리방침</a></div><p class="footer-admin"><a href="#admin">운영 화면</a></p></div></div></footer>'}
+function siteShell(view,isHome){return'<div class="site-shell"><div class="proto">화면 확인용 시안입니다. 입력한 내용은 이 브라우저에만 저장됩니다.</div>'+headerHtml()+'<main id="main" tabindex="-1">'+(isHome?view:'<div class="page-width inner">'+view+'</div>')+'</main>'+footerHtml()+modalHtml()+'</div>'}
+function adminShell(h){const k=h.replace('admin-','');let v;
+ if(h==='admin')v=A.admin();else if(A[k])v=A[k]();else if(C[k])v=crud(k);else v=A.admin();
+ return'<div class="site-shell"><div class="proto">운영 화면 시안입니다. 실제 서비스에서는 관리자 로그인 뒤에만 열립니다.</div>'+headerHtml(true)+'<main id="main"><div class="page-width inner adm"><nav class="adm-nav" aria-label="운영 메뉴"><select id="anav" aria-label="운영 메뉴">'+AN.map(n=>'<option value="'+n[0]+'"'+(n[0]===h?' selected':'')+'>'+n[1]+'</option>').join('')+'</select><ul>'+AN.map(n=>'<li><a href="#'+n[0]+'"'+(n[0]===h?' aria-current="page"':'')+'>'+n[1]+'</a></li>').join('')+'</ul></nav><div>'+v+'</div></div></main>'+modalHtml()+'</div>'}
+const HOME_SECS=['home','market','products','how','news'];
+function render(){let h=location.hash.slice(1)||'home';if(h==='shop')h='products';if(h==='guide')h='how';
+ const app=document.getElementById('app'),changed=h!==last;
+ if(changed){UI.edit=null;UI.draft=null;UI.del=null;UI.err='';UI.img=null;UI.menu=false;if(!h.startsWith('admin'))UI.q=''}
+ if(h.startsWith('admin'))app.innerHTML=adminShell(h);
+ else if(HOME_SECS.includes(h)){if(h==='home'&&S.site.popupOn&&!S.seenPopup&&!UI.modal){UI.modal={t:'popup'};S.seenPopup=true;save()}app.innerHTML=siteShell(V.home(),true)}
+ else{let v;
+  if(h.startsWith('p-'))v=V.product(h.slice(2));else if(h.startsWith('n-'))v=V.newsOne(h.slice(2));
+  else if(h==='news-all')v=V.news();else if(h==='terms-use')v=V.terms('use');else if(h==='terms-privacy')v=V.terms('privacy');
+  else if(h==='join')v=V.join();else if(h==='me'||h==='login')v=S.me?V.me():V.login();
+  else if(['prices','help','ask'].includes(h))v=V[h]();else v=V.nf();
+  app.innerHTML=siteShell(v,false)}
+ if(changed){const wasHome=HOME_SECS.includes(last);last=h;
+  if(HOME_SECS.includes(h)&&h!=='home'){const el=document.getElementById(h);if(el)el.scrollIntoView({behavior:wasHome?'smooth':'auto'})}
+  else window.scrollTo(0,0)}}
+function alertOn(pid){UI.err='';UI.modal={t:'alert',id:pid||'all'};render()}
+ACT.alertOn=id=>alertOn(id);
+ACT.alertOff=id=>{const m=me();S.alerts=S.alerts.filter(a=>!(m&&a.phone===m.phone&&a.p===id));save();toast('알림 신청을 취소했습니다');render()};
+ACT.goProducts=()=>go('products');
+ACT.menu=()=>{UI.menu=!UI.menu;render()};
+ACT.skip=(id,b,e)=>{e.preventDefault();const m=document.getElementById('main');m.focus();m.scrollIntoView()};
+ACT.backdrop=(id,b,e)=>{if(e.target===b){UI.modal=null;render()}};
+ACT.copyPhones=id=>{const t=S.alerts.filter(a=>a.p===id).map(a=>a.phone).join('\n');
+ try{navigator.clipboard.writeText(t).then(()=>toast('연락처를 복사했습니다'),()=>toast('복사하지 못했습니다. 목록을 직접 선택해 주세요'))}catch(e){toast('복사하지 못했습니다. 목록을 직접 선택해 주세요')}};
+FORM.alert=(d,f)=>{const id=f.dataset.id,ph=d.phone.replace(/[^0-9]/g,'');
+ if(ph.length<10||ph.length>11){UI.err='휴대폰 번호를 다시 확인해 주세요. 예: 010-1234-5678';UI.modal={t:'alert',id:id,phone:d.phone};return render()}
+ if(!S.alerts.some(a=>a.p===id&&a.phone.replace(/[^0-9]/g,'')===ph))S.alerts.push({id:uid(),phone:d.phone.trim(),p:id,at:today()});
+ UI.err='';save();UI.modal={t:'alertDone',id:id};render()};
+A.alerts=function(){const groups=[{id:'all',name:'새 공동구매(상품을 고르지 않은 신청)'}].concat(S.products.map(p=>({id:p.id,name:p.name})));
+ return'<h1>알림</h1><p class="sub" style="margin-top:10px">로그인 없이 휴대폰 번호로 받은 오픈 알림 신청입니다. 공동구매를 열 때 한 번 안내하고 지웁니다. 지금은 연락처를 복사해 직접 안내하고, 카카오 알림톡 자동 발송은 다음 단계에서 붙입니다.</p>'+groups.map(g=>{const l=S.alerts.filter(a=>a.p===g.id);return'<div class="box" style="margin-top:14px"><div class="sec-h"><h3>'+esc(g.name)+' '+l.length+'명</h3>'+(l.length?'<button class="btn sm quiet" data-a="copyPhones" data-id="'+g.id+'">연락처 복사</button>':'')+'</div>'+(l.length?'<p class="sub">'+l.map(a=>esc(a.phone)+' ('+esc(a.at)+')').join('<br>')+'</p>':'<p class="sub">신청이 없습니다.</p>')+'</div>'}).join('')};
+document.getElementById('toast').className='toast';
+
+/* ---- 공개용: 홈·시세·소식·자주 묻는 질문만. 가입·문의·운영 화면 없음 ---- */
+const FORM_URL='';   // 오픈 알림 신청을 받을 구글폼 주소를 여기에 넣습니다
+S=seed();
+
+S.faqs.forEach(f=>{
+ if(f.id==='f5')f.a='받은 날부터 3일 안에 문의 전화로 알려 주세요. 사진을 함께 보내 주시면 빠르게 확인합니다.';
+ if(f.id==='f6')f.a='지금은 달빛마을 3단지 주민을 대상으로 준비하고 있습니다. 식당과 사업장은 추후 확대할 예정입니다.';
+ if(f.id==='f7')f.a='문의 전화로 단지 이름을 알려 주시면 열릴 때 연락드립니다.'});
+S.terms=[{id:'t2',kind:'privacy',ver:'1',date:'2026-11-21',body:'직공은 공동구매 오픈 알림을 보내기 위해 휴대폰 번호를 받습니다.\n\n받는 정보: 휴대폰 번호, 알림을 받고 싶은 품목\n쓰는 곳: 공동구매가 열릴 때 한 번 안내\n보관 기간: 알림을 보낸 뒤 지웁니다. 그 전에도 요청하시면 바로 지웁니다.\n문의: '+S.site.phone}];
+function alertOn(pid){if(FORM_URL){window.open(FORM_URL,'_blank','noopener');return}UI.modal={t:'soon'};render()}
+ACT.alertOn=id=>alertOn(id);
+const _modal=modalHtml;
+modalHtml=function(){if(UI.modal&&UI.modal.t==='soon')return'<div class="modal-backdrop" data-a="backdrop"><div class="alert-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="modal-close" data-a="closeModal" aria-label="닫기">'+icon('close')+'</button><div class="modal-icon">'+icon('bell',27)+'</div><span class="modal-kicker">오픈 알림 신청</span><h2 id="modal-title">알림 신청을<br>곧 열어 드릴게요.</h2><p>그 전에 궁금한 점은 '+esc(S.site.phone)+'로 연락해 주세요.</p><div class="modal-success" style="padding-top:0"><button class="button primary" data-a="closeModal">확인</button></div></div></div>';return _modal()};
+headerHtml=function(){return'<header class="site-header"><a class="skip-link" href="#" data-a="skip">본문 바로가기</a><div class="header-inner"><a class="brand" href="#home" aria-label="직공 홈"><img src="'+LOGO+'" alt=""><span>직공</span><small>직거래 공동구매</small></a><nav class="main-nav'+(UI.menu?' is-open':'')+'" aria-label="주 메뉴"><a href="#market">시세 소식</a><a href="#products">공동구매</a><a href="#how">이용 안내</a><a href="#news">직공 소식</a><a class="only-mobile" href="#help">자주 묻는 질문</a></nav><div class="header-actions"><button class="header-cta" data-a="alertOn" data-id="all">오픈 알림 받기</button><button class="menu-button" data-a="menu" aria-label="메뉴 열기" aria-expanded="'+UI.menu+'">'+icon(UI.menu?'close':'menu',25)+'</button></div></div></header>'};
+footerHtml=function(){const b=S.site;return'<footer><div class="page-width footer-top"><div class="footer-brand"><img src="'+LOGO+'" alt=""><div><b>직공</b><span>직거래 공동구매</span></div></div><div class="footer-links"><a href="#how">직공 소개</a><a href="#how">이용 안내</a><a href="#news-all">공지사항</a><a href="#help">자주 묻는 질문</a></div></div><div class="page-width footer-bottom"><div><p>문의 <a href="tel:'+esc(b.phone.replace(/[^0-9]/g,''))+'">'+esc(b.phone)+'</a></p><p>사업자 정보는 공동구매 판매 시작 시 공개됩니다.</p><p class="copyright">© 2026 JIKGONG. All rights reserved.</p></div><div class="legal"><a href="#terms-privacy">개인정보 처리방침</a></div></div></footer>'};
+siteShell=function(view,isHome){return'<div class="site-shell">'+headerHtml()+'<main id="main" tabindex="-1">'+(isHome?view:'<div class="page-width inner">'+view+'</div>')+'</main>'+footerHtml()+modalHtml()+'</div>'};
+V.help=function(){const cats=[...new Set(S.faqs.filter(f=>f.on).map(f=>f.cat))];
+ return'<section><h1>자주 묻는 질문</h1>'+cats.map(c=>'<h3 style="margin-top:30px">'+esc(c)+'</h3><div class="list">'+S.faqs.filter(f=>f.on&&f.cat===c).map(f=>'<details><summary>'+esc(f.q)+'</summary><p>'+esc(f.a)+'</p></details>').join('')+'</div>').join('')+'</section><section><h2>더 궁금한 점이 있나요</h2><p class="sub" style="margin-top:10px">전화나 문자로 연락해 주세요. '+esc(S.site.phone)+'</p></section>'};
+const _render=render;
+render=function(){const h=location.hash.slice(1);if(/^(admin|login|join|me$|ask|terms-use)/.test(h)){location.hash='home';return}_render()};
+window.removeEventListener('hashchange',_render);window.addEventListener('hashchange',()=>render());
+render();
+</script>
+</body>
+</html>
