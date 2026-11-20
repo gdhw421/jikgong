@@ -89,7 +89,7 @@ const TITLE={members:['회원 목록','카카오로 가입하고 오픈 알림�
 const STAT={prep:['준비 중','gray'],soon:['곧 오픈','sun'],hidden:['숨김','gray']};
 const ST={user:null,admin:false,tab:'members',members:[],alerts:[],logs:[],products:[],complexes:[],q:'',prod:'all',cx:'all',mcx:'all',cxEdit:null,body:'',sending:false,edit:null,err:'',saving:false,lastUid:undefined};
 const pname=id=>{const p=ST.products.find(x=>x.id===id);return p?p.name:id};
-const DEFAULT_BODY=p=>'(광고) 직공\n안녕하세요, 직공입니다.\n알림 신청해 주신 '+(p==='all'?'공동구매':pname(p)+' 공동구매')+'를 시작합니다.\n\n신청은 금요일 오전 10시까지 받고,\n토요일에 문 앞으로 가져다 드립니다.\n\n자세한 내용: jikgong.com\n\n알림을 그만 받으시려면 jikgong.com의 [내 알림 신청]에서 지우실 수 있습니다.';
+const DEFAULT_BODY=p=>'(광고) 직공\n안녕하세요, 직공입니다.\n알림 신청해 주신 '+(p==='all'?'공동구매':pname(p)+' 공동구매')+'를 시작합니다.\n\n신청은 금요일 오전 10시까지 받고,\n토요일에 문 앞으로 가져다 드립니다.\n\n자세한 내용: jikgong.com\n\n알림을 그만 받으시려면 jikgong.com의 [내 알림 신청]에서 탈퇴하실 수 있습니다.';
 
 async function load(){
  const [m,a,l,p,c]=await Promise.all([
@@ -204,7 +204,7 @@ const ACT={
   const csv='\ufeff'+rows.map(r=>r.map(v=>{let s=String(v);if(/^[=+\-@]/.test(s))s="'"+s;return'"'+s.replace(/"/g,'""')+'"'}).join(',')).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='직공_회원_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href)},
  async del(id,b){const m=ST.members.find(x=>x.id===id);if(!m||!sure(b,'정말 지우기'))return;
-  const r=await sb.from('profiles').delete().eq('id',id);if(r.error){toast('지우지 못했습니다');return}await load();view();toast((m.nickname||'회원')+' 님의 정보를 지웠습니다')},
+  const r=await sb.rpc('admin_delete_member',{target:id});if(r.error){toast('지우지 못했습니다. 운영자 계정은 여기서 지울 수 없습니다.');return}await load();view();toast((m.nickname||'회원')+' 님을 탈퇴 처리하고 정보를 지웠습니다')},
  editNew(){ST.edit={status:'prep'};ST.err='';view()},
  edit(id){const p=ST.products.find(x=>x.id===id);if(p){ST.edit=Object.assign({},p);ST.err='';view()}},
  editOff(){ST.edit=null;ST.err='';view()},
