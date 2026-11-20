@@ -83,7 +83,7 @@ const $=s=>document.querySelector(s),app=$('#app');
 const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmtPhone=p=>p?p.replace(/^(\d{3})(\d{3,4})(\d{4})$/,'$1-$2-$3'):'';
 const fmtDate=d=>d?new Date(d).toLocaleString('ko-KR',{year:'2-digit',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
-let tt;function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',3500)}
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',6000)}
 const MENU=[['회원',[['members','회원 목록']]],['상품',[['products','품목 관리']]],['알림',[['send','알림 보내기'],['logs','발송 기록']]]];
 const TITLE={members:['회원 목록','카카오로 가입하고 오픈 알림을 신청한 회원입니다.'],products:['품목 관리','사이트의 공동구매 품목과 알림 신청 품목이 여기서 정해집니다.'],send:['알림 보내기','품목을 고르면 그 품목 알림을 신청한 회원에게 문자를 보냅니다.'],logs:['발송 기록','보낸 문자가 최근 순으로 남습니다.']};
 const STAT={prep:['준비 중','gray'],soon:['곧 오픈','sun'],hidden:['숨김','gray']};
@@ -186,7 +186,7 @@ const ACT={
   if(!sure(b,'한 번 더 누르면 '+t.length+'명에게 나갑니다',5000))return;
   ST.body=body;ST.sending=true;view();
   const r=await sb.functions.invoke('send-sms',{body:{product:ST.prod,body:body}});ST.sending=false;
-  if(r.error){view();toast('문자 발송이 아직 연결되지 않았거나 실패했습니다. 발송 기록을 확인해 주세요.');return}
+  if(r.error){let msg='';try{msg=(await r.error.context.json()).error||''}catch(x){}await load();view();toast(msg||'문자를 보내지 못했습니다. 발송 기록을 확인해 주세요.');return}
   await load();ST.tab='logs';view();toast((r.data&&r.data.success_count!=null?r.data.success_count:t.length)+'명에게 보냈습니다')}
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&ACT[b.dataset.a])ACT[b.dataset.a](b.dataset.id,b)});
