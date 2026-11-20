@@ -9,6 +9,7 @@
 <meta property="og:description" content="가격이 내려간 농산물, 가치는 그대로 전해요.">
 <meta property="og:image" content="assets/harvest.jpg">
 <link rel="icon" href="assets/logo.webp">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -302,6 +303,7 @@ label.ck input{width:18px;height:18px;margin-top:3px;accent-color:var(--green-80
 .footer-admin{margin-top:8px}
 @media(min-width:900px){.adm{grid-template-columns:200px minmax(0,1fr)}.adm-nav select{display:none}.adm-nav ul{display:block}}
 
+.kakao-btn{width:100%;background:#FEE500;color:#191919;border:0}.kakao-btn:hover{background:#f5dc00}.picks{border:0;padding:0;margin:0;display:flex;flex-wrap:wrap;gap:8px 18px}.picks legend{font-size:12px;font-weight:700;margin-bottom:8px;padding:0}.consent em{display:block;margin-top:4px;font-style:normal;font-size:11px;line-height:1.6;color:var(--muted)}.textlink{background:none;border:0;padding:0;color:inherit;font-size:11px;text-decoration:underline;cursor:pointer}.alert-modal .err{color:#b42318;font-size:12px;margin:0}
 .pic{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;background:#ece9df}
 </style>
 </head>
@@ -636,19 +638,55 @@ A.alerts=function(){const groups=[{id:'all',name:'새 공동구매(상품을 고
 document.getElementById('toast').className='toast';
 
 /* ---- 공개용: 홈·시세·소식·자주 묻는 질문만. 가입·문의·운영 화면 없음 ---- */
-const FORM_URL='https://docs.google.com/forms/d/e/1FAIpQLSfJIhDt-tAkVxy1_id9MKtZCJw2_QqS19sgQHmNYR04ZP8a_A/viewform';   // 오픈 알림 신청을 받을 구글폼 주소를 여기에 넣습니다
 S=seed();
 
 S.faqs.forEach(f=>{
  if(f.id==='f5')f.a='받은 날부터 3일 안에 문의 전화로 알려 주세요. 사진을 함께 보내 주시면 빠르게 확인합니다.';
  if(f.id==='f6')f.a='지금은 달빛마을 3단지 주민을 대상으로 준비하고 있습니다. 식당과 사업장은 추후 확대할 예정입니다.';
  if(f.id==='f7')f.a='문의 전화로 단지 이름을 알려 주시면 열릴 때 연락드립니다.'});
-S.terms=[{id:'t2',kind:'privacy',ver:'1',date:'2026-11-21',body:'직공은 공동구매 오픈 알림을 보내기 위해 휴대폰 번호를 받습니다.\n\n받는 정보: 휴대폰 번호, 알림을 받고 싶은 품목\n쓰는 곳: 공동구매가 열릴 때 한 번 안내\n보관 기간: 알림을 보낸 뒤 지웁니다. 그 전에도 요청하시면 바로 지웁니다.\n문의: '+S.site.phone}];
-function alertOn(pid){if(FORM_URL){window.open(FORM_URL,'_blank','noopener');return}UI.modal={t:'soon'};render()}
+S.terms=[{id:'t3',kind:'privacy',ver:'2',date:'2026-11-21',body:'직공은 공동구매 오픈 안내를 보내기 위해 아래 정보를 받습니다.\n\n받는 정보: 카카오 닉네임, 카카오계정 이메일, 휴대폰 번호, 알림을 받고 싶은 품목 (프로필 사진은 받더라도 쓰지 않습니다)\n쓰는 곳: 회원 확인, 공동구매가 열릴 때 문자 안내\n보관 기간: 알림 신청을 지우거나 요청하시면 바로 지웁니다.\n맡기는 곳: 정보 보관은 Supabase(서울 지역 서버), 문자 발송은 문자 발송 대행사에 맡깁니다.\n알림 그만 받기: 사이트의 내 알림 신청에서 직접 지우거나 문의 번호로 알려 주세요.\n문의: '+S.site.phone}];
+/* ---- 카카오 가입 + 오픈 알림 신청 (Supabase) ---- */
+const SB_URL='https://pfzwfxlykhflnfwhvslh.supabase.co',SB_KEY='sb_publishable_JI5ItD5d36j3x7WpTDKWTg_Hf-0JWJs',PEND='jg-pending',PV='2';
+const sb=window.supabase?window.supabase.createClient(SB_URL,SB_KEY,{auth:{flowType:'pkce',detectSessionInUrl:true,persistSession:true}}):null;
+const AU={user:null,profile:null,alerts:[],busy:false};let lastUid;
+const JP=[['apple','사과'],['goguma','고구마'],['dangam','단감']];
+function alertOn(pid){UI.err='';if(!sb){UI.modal={t:'soon'};return render()}UI.modal={t:AU.user?'join':'kakao',id:pid||'all'};render()}
 ACT.alertOn=id=>alertOn(id);
+ACT.kakao=id=>{try{localStorage.setItem(PEND,id||'all')}catch(e){}sb.auth.signInWithOAuth({provider:'kakao',options:{redirectTo:location.origin+'/'}}).then(r=>{if(r.error)toast('카카오 로그인을 열지 못했습니다. 잠시 뒤 다시 눌러 주세요.')})};
+ACT.jgLogout=()=>{sb.auth.signOut().then(()=>{UI.modal=null;toast('로그아웃했습니다');render()})};
+ACT.jgLeave=()=>{UI.modal={t:'jgLeave'};render()};
+ACT.jgLeaveOk=async()=>{const r=await sb.from('profiles').delete().eq('id',AU.user.id);if(r.error){toast('지우지 못했습니다. '+S.site.phone+'로 알려 주세요.');return}await sb.auth.signOut();UI.modal=null;toast('신청 정보를 모두 지웠습니다');render()};
+async function jgLoad(){const u=AU.user;if(!u){AU.profile=null;AU.alerts=[];return}
+ const [p,a]=await Promise.all([sb.from('profiles').select('*').eq('id',u.id).maybeSingle(),sb.from('alert_requests').select('product').eq('user_id',u.id)]);
+ AU.profile=p.data||null;AU.alerts=(a.data||[]).map(x=>x.product)}
+async function jgSession(sess){const u=sess?sess.user:null,uid=u?u.id:null;let pend=null;try{pend=localStorage.getItem(PEND)}catch(e){}
+ if(uid===lastUid&&!(u&&pend))return;lastUid=uid;AU.user=u;await jgLoad();
+ if(u&&pend){try{localStorage.removeItem(PEND)}catch(e){}UI.modal={t:'join',id:pend}}
+ if(location.search)history.replaceState(null,'',location.pathname+location.hash);render()}
+FORM.join=async(d,f)=>{if(AU.busy)return;const ph=(d.phone||'').replace(/[^0-9]/g,''),picks=JP.map(x=>x[0]).filter(k=>d['p_'+k]);
+ const back=e=>{UI.err=e;UI.modal={t:'join',id:f.dataset.id,phone:d.phone,picks:picks};render()};
+ if(!/^01[0-9]{8,9}$/.test(ph))return back('휴대폰 번호를 다시 확인해 주세요. 예: 010-1234-5678');
+ if(!picks.length)return back('알림을 받을 품목을 하나 이상 골라 주세요.');
+ AU.busy=true;const u=AU.user,md=u.user_metadata||{},now=new Date().toISOString();
+ const row={id:u.id,nickname:md.name||md.preferred_username||md.full_name||null,email:u.email||null,phone:ph,sms_consent:true,sms_consent_at:(AU.profile&&AU.profile.sms_consent_at)||now,privacy_agreed_at:(AU.profile&&AU.profile.privacy_agreed_at)||now,privacy_version:PV,updated_at:now};
+ const r1=await sb.from('profiles').upsert(row);
+ if(r1.error){AU.busy=false;return back('저장하지 못했습니다. 잠시 뒤 다시 눌러 주세요.')}
+ const drop=AU.alerts.filter(k=>!picks.includes(k)),add=picks.filter(k=>!AU.alerts.includes(k));
+ if(drop.length)await sb.from('alert_requests').delete().eq('user_id',u.id).in('product',drop);
+ const r2=add.length?await sb.from('alert_requests').insert(add.map(k=>({user_id:u.id,product:k}))):{};
+ AU.busy=false;if(r2.error)return back('저장하지 못했습니다. 잠시 뒤 다시 눌러 주세요.');
+ await jgLoad();UI.err='';UI.modal={t:'joinDone',picks:picks};render()};
 const _modal=modalHtml;
-modalHtml=function(){if(UI.modal&&UI.modal.t==='soon')return'<div class="modal-backdrop" data-a="backdrop"><div class="alert-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title"><button class="modal-close" data-a="closeModal" aria-label="닫기">'+icon('close')+'</button><div class="modal-icon">'+icon('bell',27)+'</div><span class="modal-kicker">오픈 알림 신청</span><h2 id="modal-title">알림 신청을<br>곧 열어 드릴게요.</h2><p>그 전에 궁금한 점은 '+esc(S.site.phone)+'로 연락해 주세요.</p><div class="modal-success" style="padding-top:0"><button class="button primary" data-a="closeModal">확인</button></div></div></div>';return _modal()};
-headerHtml=function(){return'<header class="site-header"><a class="skip-link" href="#" data-a="skip">본문 바로가기</a><div class="header-inner"><a class="brand" href="#home" aria-label="직공 홈"><img src="'+LOGO+'" alt=""><span>직공</span><small>직거래 공동구매</small></a><nav class="main-nav'+(UI.menu?' is-open':'')+'" aria-label="주 메뉴"><a href="#market">시세 소식</a><a href="#products">공동구매</a><a href="#how">이용 안내</a><a href="#news">직공 소식</a><a class="only-mobile" href="#help">자주 묻는 질문</a></nav><div class="header-actions"><button class="header-cta" data-a="alertOn" data-id="all">오픈 알림 받기</button><button class="menu-button" data-a="menu" aria-label="메뉴 열기" aria-expanded="'+UI.menu+'">'+icon(UI.menu?'close':'menu',25)+'</button></div></div></header>'};
+modalHtml=function(){const m=UI.modal;if(!m||!['soon','kakao','join','joinDone','jgLeave'].includes(m.t))return _modal();
+ const x='<button class="modal-close" data-a="closeModal" aria-label="닫기">'+icon('close')+'</button>',bell='<div class="modal-icon">'+icon('bell',27)+'</div><span class="modal-kicker">오픈 알림 신청</span>';let c='';
+ if(m.t==='soon')c=x+bell+'<h2 id="modal-title">알림 신청을<br>곧 열어 드릴게요.</h2><p>그 전에 궁금한 점은 '+esc(S.site.phone)+'로 연락해 주세요.</p><div class="modal-success" style="padding-top:0"><button class="button primary" data-a="closeModal">확인</button></div>';
+ if(m.t==='kakao')c=x+bell+'<h2 id="modal-title">'+esc(prodName(m.id))+' 소식,<br>놓치지 않게 알려드릴게요.</h2><p>카카오 계정으로 가입하고 휴대폰 번호를 남기면, 공동구매가 열릴 때 문자로 알려드립니다.</p><div class="modal-success" style="padding-top:0"><button class="button kakao-btn" data-a="kakao" data-id="'+esc(m.id)+'">카카오로 시작하기</button></div><small>가입할 때 카카오 닉네임과 이메일을 받습니다.</small>';
+ if(m.t==='join'){const pf=AU.profile,sel=m.picks||(pf?AU.alerts:[]),on=k=>sel.includes(k)||m.id==='all'&&!pf&&!m.picks||m.id===k;
+  c=x+bell+'<h2 id="modal-title">'+(pf?'알림 신청 내역':'연락처를 남겨 주세요')+'</h2><p>공동구매가 열릴 때 문자로 알려드립니다.</p><form data-f="join" data-id="'+esc(m.id)+'"><label>휴대폰 번호<input type="tel" name="phone" inputmode="numeric" autocomplete="tel" placeholder="010-1234-5678" required value="'+esc(m.phone||(pf&&pf.phone)||'')+'"></label><fieldset class="picks"><legend>알림을 받을 품목</legend>'+JP.map(p=>'<label class="consent"><input type="checkbox" name="p_'+p[0]+'"'+(on(p[0])?' checked':'')+'><span>'+p[1]+'</span></label>').join('')+'</fieldset>'+(UI.err?'<p class="err" role="alert">'+esc(UI.err)+'</p>':'')+'<label class="consent"><input type="checkbox" name="ok1" required'+(pf||m.picks?' checked':'')+'><span>개인정보 수집·이용에 동의합니다. (필수)<br><em>받는 정보: 카카오 닉네임·이메일, 휴대폰 번호, 알림 품목 / 쓰는 곳: 공동구매 오픈 안내 / 보관: 신청을 지우거나 요청하시면 바로 지웁니다.</em></span></label><label class="consent"><input type="checkbox" name="ok2" required'+(pf||m.picks?' checked':'')+'><span>공동구매 오픈 안내 문자(광고성 정보) 수신에 동의합니다. (필수)</span></label><button class="button primary" type="submit">'+(pf?'저장하기':'알림 신청하기')+'</button></form><small><button class="textlink" data-a="jgLogout">로그아웃</button>'+(pf?' · <button class="textlink" data-a="jgLeave">알림 그만 받기</button>':'')+'</small>'}
+ if(m.t==='joinDone')c=x+'<div class="modal-success"><div class="success-check">'+icon('check',35)+'</div><span class="modal-kicker">신청 완료</span><h2 id="modal-title">좋은 소식으로<br>다시 만나요.</h2><p>'+esc(JP.filter(p=>m.picks.includes(p[0])).map(p=>p[1]).join(', '))+' 공동구매가 열리면 문자로 알려드릴게요.</p><button class="button primary" data-a="closeModal">확인</button></div>';
+ if(m.t==='jgLeave')c=x+'<span class="modal-kicker">알림 그만 받기</span><h2 id="modal-title">신청 정보를 지울까요?</h2><p>휴대폰 번호와 알림 신청 내역이 모두 지워지고, 더는 문자를 보내지 않습니다.</p><div class="modal-success" style="padding-top:0"><button class="button primary" data-a="jgLeaveOk">지우기</button><button class="textlink" style="margin-top:14px" data-a="closeModal">그대로 두기</button></div>';
+ return'<div class="modal-backdrop" data-a="backdrop"><div class="alert-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">'+c+'</div></div>'};
+headerHtml=function(){return'<header class="site-header"><a class="skip-link" href="#" data-a="skip">본문 바로가기</a><div class="header-inner"><a class="brand" href="#home" aria-label="직공 홈"><img src="'+LOGO+'" alt=""><span>직공</span><small>직거래 공동구매</small></a><nav class="main-nav'+(UI.menu?' is-open':'')+'" aria-label="주 메뉴"><a href="#market">시세 소식</a><a href="#products">공동구매</a><a href="#how">이용 안내</a><a href="#news">직공 소식</a><a class="only-mobile" href="#help">자주 묻는 질문</a></nav><div class="header-actions"><button class="header-cta" data-a="alertOn" data-id="all">'+(AU.profile?'내 알림 신청':'오픈 알림 받기')+'</button><button class="menu-button" data-a="menu" aria-label="메뉴 열기" aria-expanded="'+UI.menu+'">'+icon(UI.menu?'close':'menu',25)+'</button></div></div></header>'};
 footerHtml=function(){const b=S.site;return'<footer><div class="page-width footer-top"><div class="footer-brand"><img src="'+LOGO+'" alt=""><div><b>직공</b><span>직거래 공동구매</span></div></div><div class="footer-links"><a href="#how">직공 소개</a><a href="#how">이용 안내</a><a href="#news-all">공지사항</a><a href="#help">자주 묻는 질문</a></div></div><div class="page-width footer-bottom"><div><p>문의 <a href="tel:'+esc(b.phone.replace(/[^0-9]/g,''))+'">'+esc(b.phone)+'</a></p><p>사업자 정보는 공동구매 판매 시작 시 공개됩니다.</p><p class="copyright">© 2026 JIKGONG. All rights reserved.</p></div><div class="legal"><a href="#terms-privacy">개인정보 처리방침</a></div></div></footer>'};
 siteShell=function(view,isHome){return'<div class="site-shell">'+headerHtml()+'<main id="main" tabindex="-1">'+(isHome?view:'<div class="page-width inner">'+view+'</div>')+'</main>'+footerHtml()+modalHtml()+'</div>'};
 V.help=function(){const cats=[...new Set(S.faqs.filter(f=>f.on).map(f=>f.cat))];
@@ -657,6 +695,8 @@ const _render=render;
 render=function(){const h=location.hash.slice(1);if(/^(admin|login|join|me$|ask|terms-use)/.test(h)){location.hash='home';return}_render()};
 window.removeEventListener('hashchange',_render);window.addEventListener('hashchange',()=>render());
 render();
+if(sb){const q=new URLSearchParams(location.search);if(q.get('error')){toast('카카오 로그인이 끝나지 않았습니다. 다시 눌러 주세요.');history.replaceState(null,'',location.pathname+location.hash)}
+ sb.auth.onAuthStateChange((ev,sess)=>{setTimeout(()=>jgSession(sess),0)})}
 </script>
 </body>
 </html>
