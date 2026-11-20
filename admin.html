@@ -84,34 +84,56 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const fmtPhone=p=>p?p.replace(/^(\d{3})(\d{3,4})(\d{4})$/,'$1-$2-$3'):'';
 const fmtDate=d=>d?new Date(d).toLocaleString('ko-KR',{year:'2-digit',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',6000)}
-const MENU=[['회원',[['members','회원 목록']]],['상품',[['products','품목 관리']]],['알림',[['send','알림 보내기'],['logs','발송 기록']]]];
-const TITLE={members:['회원 목록','카카오로 가입하고 오픈 알림을 신청한 회원입니다.'],products:['품목 관리','사이트의 공동구매 품목과 알림 신청 품목이 여기서 정해집니다.'],send:['알림 보내기','품목을 고르면 그 품목 알림을 신청한 회원에게 문자를 보냅니다.'],logs:['발송 기록','보낸 문자가 최근 순으로 남습니다.']};
+const MENU=[['회원',[['members','회원 목록'],['complexes','단지 관리']]],['상품',[['products','품목 관리']]],['알림',[['send','알림 보내기'],['logs','발송 기록']]]];
+const TITLE={members:['회원 목록','카카오로 가입하고 오픈 알림을 신청한 회원입니다.'],complexes:['단지 관리','가입할 때 고를 수 있는 아파트 단지입니다. 목록에 없는 단지를 적은 회원은 아래 요청에 모입니다.'],products:['품목 관리','사이트의 공동구매 품목과 알림 신청 품목이 여기서 정해집니다.'],send:['알림 보내기','품목과 단지를 고르면 받을 회원의 번호와 보낼 문구를 복사할 수 있습니다.'],logs:['발송 기록','보낸 문자가 최근 순으로 남습니다.']};
 const STAT={prep:['준비 중','gray'],soon:['곧 오픈','sun'],hidden:['숨김','gray']};
-const ST={user:null,admin:false,tab:'members',members:[],alerts:[],logs:[],products:[],q:'',prod:'all',body:'',sending:false,edit:null,err:'',saving:false,lastUid:undefined};
+const ST={user:null,admin:false,tab:'members',members:[],alerts:[],logs:[],products:[],complexes:[],q:'',prod:'all',cx:'all',mcx:'all',cxEdit:null,body:'',sending:false,edit:null,err:'',saving:false,lastUid:undefined};
 const pname=id=>{const p=ST.products.find(x=>x.id===id);return p?p.name:id};
 const DEFAULT_BODY=p=>'(광고) 직공\n안녕하세요, 직공입니다.\n알림 신청해 주신 '+(p==='all'?'공동구매':pname(p)+' 공동구매')+'를 시작합니다.\n\n신청은 금요일 오전 10시까지 받고,\n토요일에 문 앞으로 가져다 드립니다.\n\n자세한 내용: jikgong.com\n\n알림을 그만 받으시려면 jikgong.com의 [내 알림 신청]에서 지우실 수 있습니다.';
 
 async function load(){
- const [m,a,l,p]=await Promise.all([
+ const [m,a,l,p,c]=await Promise.all([
   sb.from('profiles').select('*').order('created_at',{ascending:false}),
   sb.from('alert_requests').select('user_id,product,created_at'),
   sb.from('sms_logs').select('*').order('created_at',{ascending:false}).limit(50),
-  sb.from('products').select('*').order('sort').order('created_at')]);
- if(m.error||a.error||p.error){toast('목록을 불러오지 못했습니다. 새로 고침해 주세요.');return}
- ST.members=m.data;ST.alerts=a.data;ST.logs=l.data||[];ST.products=p.data;
+  sb.from('products').select('*').order('sort').order('created_at'),
+  sb.from('complexes').select('*').order('sort').order('name')]);
+ if(m.error||a.error||p.error||c.error){toast('목록을 불러오지 못했습니다. 새로 고침해 주세요.');return}
+ ST.members=m.data;ST.alerts=a.data;ST.logs=l.data||[];ST.products=p.data;ST.complexes=c.data;
 }
 const prodsOf=id=>ST.alerts.filter(a=>a.user_id===id).map(a=>a.product);
 const reqCount=pid=>ST.alerts.filter(a=>a.product===pid).length;
-function targets(p){return ST.members.filter(m=>m.sms_consent&&m.phone&&(p==='all'?prodsOf(m.id).length>0:prodsOf(m.id).includes(p)))}
+const cxName=m=>{if(m.complex_id){const c=ST.complexes.find(x=>x.id===m.complex_id);return c?c.name:'-'}return m.complex_other?'요청: '+m.complex_other:'-'};
+const inCx=(m,cx)=>cx==='all'||(cx==='other'?!m.complex_id&&!!m.complex_other:String(m.complex_id)===cx);
+const cxOptions=(sel,all)=>'<option value="all"'+(sel==='all'?' selected':'')+'>'+all+'</option>'+ST.complexes.map(c=>'<option value="'+c.id+'"'+(sel===String(c.id)?' selected':'')+'>'+esc(c.name)+'</option>').join('')+'<option value="other"'+(sel==='other'?' selected':'')+'>다른 단지 (요청)</option>';
+function targets(p,cx){return ST.members.filter(m=>m.sms_consent&&m.phone&&inCx(m,cx||'all')&&(p==='all'?prodsOf(m.id).length>0:prodsOf(m.id).includes(p)))}
 
 function side(){return'<aside class="side"><div class="logo"><img src="assets/logo.webp" alt="">직공 운영</div>'+MENU.map(g=>'<h3>'+g[0]+'</h3>'+g[1].map(t=>'<button class="m" data-a="tab" data-id="'+t[0]+'"'+(ST.tab===t[0]?' aria-current="page"':'')+'>'+t[1]+'</button>').join('')).join('')+'<div class="foot"><span>'+esc(ST.user.email||'')+'</span><a href="./" target="_blank" rel="noopener">사이트 보기</a><button data-a="logout">로그아웃</button></div></aside>'}
 
 function vMembers(){
- const q=ST.q.trim().toLowerCase(),rows=ST.members.filter(m=>!q||[m.nickname,m.phone,m.email].some(v=>(v||'').toLowerCase().includes(q.replace(/-/g,''))||(v||'').toLowerCase().includes(q)));
+ const q=ST.q.trim().toLowerCase(),rows=ST.members.filter(m=>inCx(m,ST.mcx)&&(!q||[m.nickname,m.phone,m.email].some(v=>(v||'').toLowerCase().includes(q.replace(/-/g,''))||(v||'').toLowerCase().includes(q))));
  let h='<div class="stats"><div><b>'+ST.members.length+'</b><span>가입 회원</span></div><div><b>'+targets('all').length+'</b><span>문자 받을 수 있는 회원</span></div><div><b>'+ST.alerts.length+'</b><span>알림 신청 건수</span></div></div>';
- h+='<div class="card"><div class="tools"><input type="search" id="q" placeholder="이름, 휴대폰 번호, 이메일로 찾기" value="'+esc(ST.q)+'" aria-label="회원 찾기"><button class="btn line" data-a="csv">엑셀용 파일 받기</button><button class="btn line" data-a="reload">새로 고침</button></div>';
- h+=rows.length?'<div class="wrap"><table><thead><tr><th>가입일</th><th>이름</th><th>휴대폰</th><th>이메일</th><th>알림 신청</th><th>문자 동의</th><th></th></tr></thead><tbody>'+rows.map(m=>'<tr><td class="num">'+fmtDate(m.created_at)+'</td><td>'+esc(m.nickname||'-')+'</td><td class="num">'+esc(fmtPhone(m.phone))+'</td><td>'+esc(m.email||'-')+'</td><td>'+(prodsOf(m.id).map(p=>'<span class="tag">'+esc(pname(p))+'</span>').join('')||'-')+'</td><td>'+(m.sms_consent?'동의':'미동의')+'</td><td><button class="btn sm warn" data-a="del" data-id="'+esc(m.id)+'">지우기</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">'+(ST.members.length?'찾는 회원이 없습니다.':'아직 가입한 회원이 없습니다.')+'</p>';
+ h+='<div class="card"><div class="tools"><input type="search" id="q" placeholder="이름, 휴대폰 번호, 이메일로 찾기" value="'+esc(ST.q)+'" aria-label="회원 찾기"><select id="mcx" aria-label="단지로 거르기">'+cxOptions(ST.mcx,'전체 단지')+'</select><button class="btn line" data-a="csv">엑셀용 파일 받기</button><button class="btn line" data-a="reload">새로 고침</button></div>';
+ h+=rows.length?'<div class="wrap"><table><thead><tr><th>가입일</th><th>이름</th><th>휴대폰</th><th>단지</th><th>이메일</th><th>알림 신청</th><th>문자 동의</th><th></th></tr></thead><tbody>'+rows.map(m=>'<tr><td class="num">'+fmtDate(m.created_at)+'</td><td>'+esc(m.nickname||'-')+'</td><td class="num">'+esc(fmtPhone(m.phone))+'</td><td>'+esc(cxName(m))+'</td><td>'+esc(m.email||'-')+'</td><td>'+(prodsOf(m.id).map(p=>'<span class="tag">'+esc(pname(p))+'</span>').join('')||'-')+'</td><td>'+(m.sms_consent?'동의':'미동의')+'</td><td><button class="btn sm warn" data-a="del" data-id="'+esc(m.id)+'">지우기</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">'+(ST.members.length?'찾는 회원이 없습니다.':'아직 가입한 회원이 없습니다.')+'</p>';
  return h+'</div>'}
+
+function vComplexes(){
+ const cnt=id=>ST.members.filter(m=>m.complex_id===id).length;
+ if(ST.cxEdit){const e=ST.cxEdit;
+  return'<div class="card"><h2>'+(e.id?esc(e.name)+' 고치기':'새 단지')+'</h2><form id="cf" class="form">'
+  +'<label>단지 이름<input type="text" name="name" required maxlength="40" value="'+esc(e.name||'')+'" placeholder="예: 달빛마을 3단지"></label>'
+  +'<label>주소<input type="text" name="address" maxlength="80" value="'+esc(e.address||'')+'" placeholder="예: 경기 고양시 덕양구 ..."><small>운영 화면에서만 보입니다.</small></label>'
+  +'<label>가입 화면에 보이기<select name="active"><option value="1"'+(e.active===false?'':' selected')+'>보임</option><option value="0"'+(e.active===false?' selected':'')+'>숨김</option></select></label>'
+  +'<label>보이는 순서<input type="number" name="sort" value="'+esc(e.sort==null?(ST.complexes.length+1)*10:e.sort)+'"><small>작은 숫자가 먼저 나옵니다.</small></label>'
+  +(ST.err?'<p class="err full" role="alert">'+esc(ST.err)+'</p>':'')
+  +'<div class="row full"><button class="btn" type="submit">저장</button><button type="button" class="btn line" data-a="cxOff">취소</button></div></form></div>'}
+ let h='<div class="card"><div class="tools"><button class="btn" data-a="cxNew">단지 추가</button></div>';
+ h+=ST.complexes.length?'<div class="wrap"><table><thead><tr><th>순서</th><th>단지</th><th>주소</th><th>가입 화면</th><th>회원</th><th></th></tr></thead><tbody>'+ST.complexes.map(c=>'<tr><td class="num">'+c.sort+'</td><td><b>'+esc(c.name)+'</b></td><td>'+esc(c.address||'-')+'</td><td><span class="tag'+(c.active?'':' gray')+'">'+(c.active?'보임':'숨김')+'</span></td><td class="num">'+cnt(c.id)+'명</td><td class="act"><button class="btn sm line" data-a="cxEdit" data-id="'+c.id+'">고치기</button><button class="btn sm warn" data-a="cxDel" data-id="'+c.id+'">지우기</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">등록한 단지가 없습니다.</p>';
+ h+='</div>';
+ const req={};ST.members.forEach(m=>{if(!m.complex_id&&m.complex_other){const k=m.complex_other.trim();(req[k]=req[k]||[]).push(m)}});
+ const keys=Object.keys(req).sort((a,b)=>req[b].length-req[a].length);
+ h+='<div class="card"><h2>열어 달라는 요청</h2><p class="sub">가입할 때 다른 단지를 직접 적은 회원입니다. 단지로 등록하면 같은 이름을 적은 회원이 그 단지로 묶입니다.</p>'+(keys.length?'<div class="wrap"><table><thead><tr><th>적어 준 단지 이름</th><th>회원</th><th></th></tr></thead><tbody>'+keys.map(k=>'<tr><td><b>'+esc(k)+'</b></td><td class="num">'+req[k].length+'명</td><td><button class="btn sm line" data-a="cxAdopt" data-id="'+esc(k)+'">단지로 등록</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">아직 요청이 없습니다.</p>')+'</div>';
+ return h+'<div class="note">같은 단지를 다르게 적은 경우(예: 달빛 2단지, 달빛마을2단지)는 따로 셉니다. 단지를 지우면 그 단지 회원은 단지 없음으로 바뀝니다.</div>'}
 
 function vProducts(){
  if(ST.edit){const e=ST.edit,isNew=!e.id;
@@ -132,18 +154,18 @@ function vProducts(){
  h+=ST.products.length?'<div class="wrap"><table><thead><tr><th>순서</th><th>사진</th><th>품목</th><th>품종 · 등급</th><th>상태</th><th>알림 신청</th><th></th></tr></thead><tbody>'+ST.products.map(p=>'<tr><td class="num">'+p.sort+'</td><td><img class="thumb" src="'+esc(p.photo_url||'assets/harvest.jpg')+'" alt=""></td><td><b>'+esc(p.name)+'</b></td><td>'+esc([p.variety,p.grade].filter(Boolean).join(' · ')||'-')+'</td><td><span class="tag '+STAT[p.status][1]+'">'+STAT[p.status][0]+'</span></td><td class="num">'+reqCount(p.id)+'명</td><td class="act"><button class="btn sm line" data-a="edit" data-id="'+esc(p.id)+'">고치기</button><button class="btn sm warn" data-a="delProd" data-id="'+esc(p.id)+'">지우기</button></td></tr>').join('')+'</tbody></table></div>':'<p class="empty">등록한 품목이 없습니다. 품목을 추가해 주세요.</p>';
  return h+'</div><div class="note">품목을 지우면 그 품목의 알림 신청도 함께 지워집니다. 잠시 내릴 때는 상태를 숨김으로 바꿔 주세요.</div>'}
 
-function vSend(){const t=targets(ST.prod),body=ST.body||DEFAULT_BODY(ST.prod);
- return'<div class="card"><div class="row"><label for="prod">받는 사람</label><select id="prod"><option value="all"'+(ST.prod==='all'?' selected':'')+'>알림 신청자 전체</option>'+ST.products.map(p=>'<option value="'+esc(p.id)+'"'+(ST.prod===p.id?' selected':'')+'>'+esc(p.name)+' 알림 신청자</option>').join('')+'</select><b>'+t.length+'명</b><span class="count">문자 수신에 동의하고 번호를 남긴 회원만 셉니다.</span></div>'
+function vSend(){const t=targets(ST.prod,ST.cx),body=ST.body||DEFAULT_BODY(ST.prod);
+ return'<div class="card"><div class="row"><label for="prod">받는 사람</label><select id="prod"><option value="all"'+(ST.prod==='all'?' selected':'')+'>알림 신청자 전체</option>'+ST.products.map(p=>'<option value="'+esc(p.id)+'"'+(ST.prod===p.id?' selected':'')+'>'+esc(p.name)+' 알림 신청자</option>').join('')+'</select><select id="cx" aria-label="단지">'+cxOptions(ST.cx,'전체 단지')+'</select><b>'+t.length+'명</b><span class="count">문자 수신에 동의하고 번호를 남긴 회원만 셉니다.</span></div>'
  +'<label for="body"><b>보낼 내용</b></label><textarea id="body">'+esc(body)+'</textarea><p class="count" id="bytes"></p>'
- +'<div class="note">오픈 알림은 광고 문자로 분류됩니다. 맨 앞의 (광고) 직공과 끝의 수신 거부 안내는 법으로 정해진 표기라 지우면 안 됩니다. 그 사이 문장은 자유롭게 고쳐 쓰세요. 밤 9시부터 아침 8시 사이에는 보내지 않습니다.</div>'
- +'<div class="row"><button class="btn" data-a="send"'+(t.length&&!ST.sending?'':' disabled')+'>'+(ST.sending?'보내는 중':t.length+'명에게 문자 보내기')+'</button><button class="btn line" data-a="copy"'+(t.length?'':' disabled')+'>번호만 복사</button><button class="btn line" data-a="resetBody">기본 문구로</button></div></div>'}
+ +'<div class="note">지금은 번호와 문구를 복사해 휴대폰에서 직접 보냅니다. 받는 사람끼리 번호가 보이지 않게 개별 발송으로 보내세요. 오픈 알림은 광고 문자라서 맨 앞의 (광고) 직공과 끝의 수신 거부 안내는 지우면 안 되고, 밤 9시부터 아침 8시 사이에는 보내지 않습니다.</div>'
+ +'<div class="row"><button class="btn" data-a="copy"'+(t.length?'':' disabled')+'>번호 '+t.length+'개 복사</button><button class="btn line" data-a="copyBody">문구 복사</button><button class="btn line" data-a="resetBody">기본 문구로</button></div></div>'}
 
 function vLogs(){return'<div class="card">'+(ST.logs.length?'<div class="wrap"><table><thead><tr><th>보낸 때</th><th>받는 사람</th><th>대상</th><th>성공</th><th>내용</th></tr></thead><tbody>'+ST.logs.map(l=>'<tr><td class="num">'+fmtDate(l.created_at)+'</td><td>'+esc(l.product==='all'||!l.product?'전체':pname(l.product))+'</td><td class="num">'+l.target_count+'</td><td class="num">'+(l.success_count==null?'-':l.success_count)+'</td><td style="white-space:pre-wrap;min-width:260px">'+esc(l.body)+'</td></tr>').join('')+'</tbody></table></div>':'<p class="empty">아직 보낸 문자가 없습니다.</p>')+'</div>'}
 
 function view(){
  if(!ST.user){app.innerHTML='<div class="center card"><h1>직공 운영</h1><p class="sub">운영자로 등록된 카카오 계정으로 들어옵니다.</p><button class="btn kakao" data-a="login">카카오로 로그인</button></div>';return}
  if(!ST.admin){app.innerHTML='<div class="center card"><h1>운영 권한이 없는 계정입니다</h1><p class="sub">이 계정을 운영자로 등록해야 화면이 열립니다. 아래 값을 등록 담당에게 알려 주세요.</p><p><code>'+esc(ST.user.id)+'</code></p><p class="sub">'+esc(ST.user.email||'')+'</p><button class="btn line" data-a="logout">로그아웃</button></div>';return}
- const V={members:vMembers,products:vProducts,send:vSend,logs:vLogs};
+ const V={members:vMembers,complexes:vComplexes,products:vProducts,send:vSend,logs:vLogs};
  app.innerHTML='<div class="shell">'+side()+'<main><h1>'+TITLE[ST.tab][0]+'</h1><p class="sub">'+TITLE[ST.tab][1]+'</p>'+V[ST.tab]()+'</main></div>';
  if(ST.tab==='send')bytes();
 }
@@ -163,13 +185,22 @@ async function saveProduct(f){if(ST.saving)return;const d=Object.fromEntries(new
  ST.saving=false;if(r.error){ST.err='저장하지 못했습니다. 잠시 뒤 다시 눌러 주세요.';return view()}
  ST.edit=null;await load();view();toast(name+' 품목을 저장했습니다')}
 
+async function saveComplex(f){const d=Object.fromEntries(new FormData(f)),e=ST.cxEdit,name=(d.name||'').trim();
+ Object.assign(e,{name:d.name,address:d.address,active:d.active==='1',sort:d.sort});
+ if(!name){ST.err='단지 이름을 적어 주세요.';return view()}
+ if(ST.complexes.some(c=>c.name===name&&c.id!==e.id)){ST.err='같은 이름의 단지가 이미 있습니다.';return view()}
+ const row={name:name,address:(d.address||'').trim()||null,active:d.active==='1',sort:parseInt(d.sort,10)||0};
+ const r=e.id?await sb.from('complexes').update(row).eq('id',e.id):await sb.from('complexes').insert(row);
+ if(r.error){ST.err='저장하지 못했습니다. 잠시 뒤 다시 눌러 주세요.';return view()}
+ ST.cxEdit=null;ST.err='';await load();view();toast(name+' 단지를 저장했습니다')}
+
 function sure(b,label,ms){if(b.dataset.sure==='1')return true;const o=b.textContent;b.dataset.sure='1';b.textContent=label;setTimeout(()=>{if(b.isConnected){b.dataset.sure='';b.textContent=o}},ms||4000);return false}
 const ACT={
  login(){sb.auth.signInWithOAuth({provider:'kakao',options:{redirectTo:location.origin+location.pathname}})},
  logout(){sb.auth.signOut()},
- tab(id){ST.tab=id;ST.edit=null;ST.err='';view();window.scrollTo(0,0)},
+ tab(id){ST.tab=id;ST.edit=null;ST.cxEdit=null;ST.err='';view();window.scrollTo(0,0)},
  async reload(){await load();view();toast('다시 불러왔습니다')},
- csv(){const rows=[['가입일','이름','휴대폰','이메일','알림 신청','문자 동의']].concat(ST.members.map(m=>[fmtDate(m.created_at),m.nickname||'',fmtPhone(m.phone),m.email||'',prodsOf(m.id).map(pname).join('/'),m.sms_consent?'동의':'미동의']));
+ csv(){const rows=[['가입일','이름','휴대폰','단지','이메일','알림 신청','문자 동의']].concat(ST.members.map(m=>[fmtDate(m.created_at),m.nickname||'',fmtPhone(m.phone),cxName(m),m.email||'',prodsOf(m.id).map(pname).join('/'),m.sms_consent?'동의':'미동의']));
   const csv='\ufeff'+rows.map(r=>r.map(v=>{let s=String(v);if(/^[=+\-@]/.test(s))s="'"+s;return'"'+s.replace(/"/g,'""')+'"'}).join(',')).join('\r\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='직공_회원_'+new Date().toISOString().slice(0,10)+'.csv';a.click();URL.revokeObjectURL(a.href)},
  async del(id,b){const m=ST.members.find(x=>x.id===id);if(!m||!sure(b,'정말 지우기'))return;
@@ -180,19 +211,27 @@ const ACT={
  noPhoto(){const f=$('#pf');if(f){const d=Object.fromEntries(new FormData(f));Object.assign(ST.edit,d)}ST.edit.photo_url=null;ST.edit._file=null;ST.edit._pv=null;view()},
  async delProd(id,b){const p=ST.products.find(x=>x.id===id);if(!p)return;const n=reqCount(id);if(!sure(b,n?'알림 신청 '+n+'명도 지워집니다. 정말 지우기':'정말 지우기',5000))return;
   const r=await sb.from('products').delete().eq('id',id);if(r.error){toast('지우지 못했습니다');return}if(ST.prod===id)ST.prod='all';await load();view();toast(p.name+' 품목을 지웠습니다')},
- copy(){const t=targets(ST.prod).map(m=>m.phone).join('\n');navigator.clipboard.writeText(t).then(()=>toast('번호를 복사했습니다'),()=>toast('복사하지 못했습니다'))},
+ copy(){const t=targets(ST.prod,ST.cx).map(m=>m.phone).join('\n');navigator.clipboard.writeText(t).then(()=>toast('번호를 복사했습니다'),()=>toast('복사하지 못했습니다'))},
  resetBody(){ST.body='';view()},
- async send(id,b){const body=$('#body').value.trim(),t=targets(ST.prod);if(!body){toast('보낼 내용을 적어 주세요');return}
-  if(!sure(b,'한 번 더 누르면 '+t.length+'명에게 나갑니다',5000))return;
-  ST.body=body;ST.sending=true;view();
-  const r=await sb.functions.invoke('send-sms',{body:{product:ST.prod,body:body}});ST.sending=false;
-  if(r.error){let msg='';try{msg=(await r.error.context.json()).error||''}catch(x){}await load();view();toast(msg||'문자를 보내지 못했습니다. 발송 기록을 확인해 주세요.');return}
-  await load();ST.tab='logs';view();toast((r.data&&r.data.success_count!=null?r.data.success_count:t.length)+'명에게 보냈습니다')}
+ copyBody(){navigator.clipboard.writeText($('#body').value).then(()=>toast('문구를 복사했습니다'),()=>toast('복사하지 못했습니다'))},
+ cxNew(){ST.cxEdit={active:true};ST.err='';view()},
+ cxEdit(id){const c=ST.complexes.find(x=>String(x.id)===id);if(c){ST.cxEdit=Object.assign({},c);ST.err='';view()}},
+ cxOff(){ST.cxEdit=null;ST.err='';view()},
+ async cxDel(id,b){const c=ST.complexes.find(x=>String(x.id)===id);if(!c)return;const n=ST.members.filter(m=>m.complex_id===c.id).length;if(!sure(b,n?'회원 '+n+'명이 단지 없음으로 바뀝니다. 정말 지우기':'정말 지우기',5000))return;
+  const r=await sb.from('complexes').delete().eq('id',c.id);if(r.error){toast('지우지 못했습니다');return}await load();view();toast(c.name+' 단지를 지웠습니다')},
+ async cxAdopt(name,b){if(!sure(b,'한 번 더 누르면 등록합니다'))return;
+  let c=ST.complexes.find(x=>x.name===name);
+  if(!c){const r=await sb.from('complexes').insert({name:name,sort:(ST.complexes.length+1)*10}).select().single();if(r.error){toast('등록하지 못했습니다');return}c=r.data}
+  const ids=ST.members.filter(m=>!m.complex_id&&(m.complex_other||'').trim()===name).map(m=>m.id);
+  if(ids.length){const u=await sb.from('profiles').update({complex_id:c.id,complex_other:null}).in('id',ids);if(u.error){await load();view();toast('단지는 등록했지만 회원을 묶지 못했습니다');return}}
+  await load();view();toast(name+' 단지를 등록하고 회원 '+ids.length+'명을 묶었습니다')},
 };
 document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(b&&ACT[b.dataset.a])ACT[b.dataset.a](b.dataset.id,b)});
-document.addEventListener('submit',e=>{e.preventDefault();if(e.target.id==='pf')saveProduct(e.target)});
+document.addEventListener('submit',e=>{e.preventDefault();if(e.target.id==='pf')saveProduct(e.target);if(e.target.id==='cf')saveComplex(e.target)});
 document.addEventListener('input',e=>{if(e.target.id==='q'){ST.q=e.target.value;view();const i=$('#q');i.focus();i.setSelectionRange(ST.q.length,ST.q.length)}if(e.target.id==='body'){ST.body=e.target.value;bytes()}});
 document.addEventListener('change',e=>{if(e.target.id==='prod'){ST.prod=e.target.value;ST.body='';view()}
+ if(e.target.id==='cx'){ST.cx=e.target.value;view()}
+ if(e.target.id==='mcx'){ST.mcx=e.target.value;view()}
  if(e.target.id==='ph'&&ST.edit){const f=e.target.files[0];if(!f)return;if(!/^image\/(jpeg|png|webp)$/.test(f.type)){toast('JPG, PNG, WEBP 사진만 올릴 수 있습니다');e.target.value='';return}ST.edit._file=f;ST.edit._pv=URL.createObjectURL(f);$('#pv').src=ST.edit._pv}});
 
 async function session(sess){const u=sess?sess.user:null,uid=u?u.id:null;if(uid===ST.lastUid)return;ST.lastUid=uid;ST.user=u;ST.admin=false;
