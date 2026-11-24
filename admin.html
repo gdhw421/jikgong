@@ -69,6 +69,22 @@ td.act .btn+.btn{margin-left:6px}
 .err{color:var(--warn);font-size:13px;margin:0}
 .center{max-width:420px;margin:80px auto;text-align:center}
 code{background:#eef1ec;padding:2px 6px;border-radius:4px;font-size:12px;word-break:break-all}
+.seg{display:inline-flex;border:1px solid #cfd6ce;border-radius:6px;overflow:hidden;background:#fff}
+.seg button{background:none;border:0;padding:8px 12px;border-right:1px solid #cfd6ce}.seg button:last-child{border-right:0}
+.seg button[aria-pressed=true]{background:var(--green);color:#fff;font-weight:700}
+.chk{display:inline-flex;align-items:center;gap:6px}
+td.neg{color:#b42318;font-variant-numeric:tabular-nums}td.pos{font-variant-numeric:tabular-nums}
+tr.pick{cursor:pointer}tr.pick:hover td{background:#f6f8f4}tr.on td{background:#eef5f0}
+.badge{display:inline-block;border-radius:4px;padding:1px 7px;font-size:12px;background:#fde8e6;color:#8f1d14;font-weight:700}
+.cal{border-collapse:separate;border-spacing:2px;min-width:0;width:auto}
+.cal th,.cal td{border:0;padding:0}.cal th{font-weight:500;font-size:11px;padding:0 6px 0 0;text-align:left}
+.cal thead th{text-align:center;padding:0 0 4px;min-width:22px}
+.cal td{width:22px;height:22px;border-radius:3px;background:#eceee9}.cal td.a{background:#d03b3b}.cal td.n{background:transparent;outline:1px dashed #d5d9d2;outline-offset:-1px}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);margin:8px 0}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-2px}
+.legend i.ln{height:3px;border-radius:2px;vertical-align:3px;width:16px}.legend i.ring{border-radius:50%;background:#fff;border:2px solid #d03b3b}
+.chart{position:relative}.chart svg{display:block;width:100%;height:auto}
+#tip{position:fixed;pointer-events:none;background:var(--ink);color:#fff;font-size:12px;line-height:1.5;padding:7px 10px;border-radius:6px;display:none;z-index:8;white-space:nowrap}
 #toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 18px;border-radius:8px;display:none;max-width:90vw;z-index:9}
 @media(max-width:760px){.shell{grid-template-columns:1fr}.side{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;padding:12px}.side .logo{padding:0 8px 0 4px}.side h3{display:none}.side button.m{width:auto}.side .foot{margin:0 0 0 auto;display:flex;align-items:center}.side .foot span{display:none}main{padding:20px 16px 70px}.form{grid-template-columns:1fr}}
 </style>
@@ -76,6 +92,7 @@ code{background:#eef1ec;padding:2px 6px;border-radius:4px;font-size:12px;word-br
 <body>
 <div id="app"><p class="empty">불러오는 중입니다.</p></div>
 <div id="toast" role="status" aria-live="polite"></div>
+<div id="tip" role="presentation"></div>
 <script>
 const SB_URL='https://pfzwfxlykhflnfwhvslh.supabase.co',SB_KEY='sb_publishable_JI5ItD5d36j3x7WpTDKWTg_Hf-0JWJs';
 const sb=window.supabase.createClient(SB_URL,SB_KEY,{auth:{flowType:'pkce',detectSessionInUrl:true,persistSession:true}});
@@ -84,10 +101,10 @@ const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;'
 const fmtPhone=p=>p?p.replace(/^(\d{3})(\d{3,4})(\d{4})$/,'$1-$2-$3'):'';
 const fmtDate=d=>d?new Date(d).toLocaleString('ko-KR',{year:'2-digit',month:'numeric',day:'numeric',hour:'2-digit',minute:'2-digit'}):'';
 let tt;function toast(m){const t=$('#toast');t.textContent=m;t.style.display='block';clearTimeout(tt);tt=setTimeout(()=>t.style.display='none',6000)}
-const MENU=[['회원',[['members','회원 목록'],['complexes','단지 관리']]],['상품',[['products','품목 관리']]],['알림',[['send','알림 보내기'],['logs','발송 기록']]]];
-const TITLE={members:['회원 목록','카카오로 가입하고 오픈 알림을 신청한 회원입니다.'],complexes:['단지 관리','가입할 때 고를 수 있는 아파트 단지입니다. 목록에 없는 단지를 적은 회원은 아래 요청에 모입니다.'],products:['품목 관리','사이트의 공동구매 품목과 알림 신청 품목이 여기서 정해집니다.'],send:['알림 보내기','품목과 단지를 고르면 받을 회원의 번호와 보낼 문구를 복사할 수 있습니다.'],logs:['발송 기록','보낸 문자가 최근 순으로 남습니다.']};
+const MENU=[['회원',[['members','회원 목록'],['complexes','단지 관리']]],['상품',[['products','품목 관리']]],['알림',[['send','알림 보내기'],['logs','발송 기록']]],['시세',[['monitor','폭락 모니터']]]];
+const TITLE={members:['회원 목록','카카오로 가입하고 오픈 알림을 신청한 회원입니다.'],complexes:['단지 관리','가입할 때 고를 수 있는 아파트 단지입니다. 목록에 없는 단지를 적은 회원은 아래 요청에 모입니다.'],products:['품목 관리','사이트의 공동구매 품목과 알림 신청 품목이 여기서 정해집니다.'],send:['알림 보내기','품목과 단지를 고르면 받을 회원의 번호와 보낼 문구를 복사할 수 있습니다.'],logs:['발송 기록','보낸 문자가 최근 순으로 남습니다.'],monitor:['폭락 모니터','상온 유통 품목의 서울 도매가를 날마다 쌓아 둔 기록입니다. 오래 떨어져 있는 품목부터 농가를 찾아볼 때 씁니다.']};
 const STAT={prep:['준비 중','gray'],soon:['곧 오픈','sun'],hidden:['숨김','gray']};
-const ST={user:null,admin:false,tab:'members',members:[],alerts:[],logs:[],products:[],complexes:[],q:'',prod:'all',cx:'all',mcx:'all',cxEdit:null,body:'',sending:false,edit:null,err:'',saving:false,lastUid:undefined};
+const ST={user:null,admin:false,tab:'members',members:[],alerts:[],logs:[],products:[],complexes:[],q:'',prod:'all',cx:'all',mcx:'all',cxEdit:null,mon:null,monErr:'',monLoading:false,mp:'30',monAlert:true,monItem:'all',monPick:null,body:'',sending:false,edit:null,err:'',saving:false,lastUid:undefined};
 const pname=id=>{const p=ST.products.find(x=>x.id===id);return p?p.name:id};
 const DEFAULT_BODY=p=>'(광고) 직공\n안녕하세요, 직공입니다.\n알림 신청해 주신 '+(p==='all'?'공동구매':pname(p)+' 공동구매')+'를 시작합니다.\n\n신청은 금요일 오전 10시까지 받고,\n토요일에 문 앞으로 가져다 드립니다.\n\n자세한 내용: jikgong.com\n\n알림을 그만 받으시려면 jikgong.com의 [내 알림 신청]에서 탈퇴하실 수 있습니다.';
 
@@ -109,6 +126,73 @@ const cxOptions=(sel,all)=>'<option value="all"'+(sel==='all'?' selected':'')+'>
 function targets(p,cx){return ST.members.filter(m=>m.sms_consent&&m.phone&&inCx(m,cx||'all')&&(p==='all'?prodsOf(m.id).length>0:prodsOf(m.id).includes(p)))}
 
 function side(){return'<aside class="side"><div class="logo"><img src="assets/logo.webp" alt="">직공 운영</div>'+MENU.map(g=>'<h3>'+g[0]+'</h3>'+g[1].map(t=>'<button class="m" data-a="tab" data-id="'+t[0]+'"'+(ST.tab===t[0]?' aria-current="page"':'')+'>'+t[1]+'</button>').join('')).join('')+'<div class="foot"><span>'+esc(ST.user.email||'')+'</span><a href="./" target="_blank" rel="noopener">사이트 보기</a><button data-a="logout">로그아웃</button></div></aside>'}
+
+/* ---- 폭락 모니터: jikgong-monitor 저장소의 누적 기록(log.csv)을 읽어 보여 줍니다 ---- */
+const MON_URL='https://raw.githubusercontent.com/gdhw421/jikgong-monitor/main/jikgong-monitor/data/log.csv';
+const SER=['#2a78d6','#eb6834','#1baf7a','#eda100'],RANKS=['상품','중품','S과','M과'];
+function parseCsv(t){const rows=[];let row=[],f='',q=false;if(t.charCodeAt(0)===65279)t=t.slice(1);
+ for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c==='"'){if(t[i+1]==='"'){f+='"';i++}else q=false}else f+=c}
+  else if(c==='"')q=true;else if(c===','){row.push(f);f=''}else if(c==='\n'){row.push(f);rows.push(row);row=[];f=''}else if(c!=='\r')f+=c}
+ if(f||row.length){row.push(f);rows.push(row)}return rows}
+const num=v=>v===''||v==null?null:Number(v);
+async function loadMonitor(){ST.monLoading=true;ST.monErr='';view();
+ try{const r=await fetch(MON_URL+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw new Error(r.status);
+  const rows=parseCsv(await r.text()),h=rows.shift(),ix=k=>h.indexOf(k),I={d:ix('date'),it:ix('item_name'),k:ix('kind_name'),r:ix('rank'),u:ix('unit'),p:ix('price'),w:ix('vs_week_pct'),m:ix('vs_month_pct'),n:ix('vs_normal_pct'),am:ix('ambient'),al:ix('alert')};
+  if(I.d<0||I.p<0||I.al<0)throw new Error('format');
+  ST.mon=rows.filter(x=>x.length>=h.length&&x[I.am]==='True').map(x=>({d:x[I.d],item:x[I.it],kind:x[I.k],rank:x[I.r],unit:x[I.u],price:num(x[I.p]),w:num(x[I.w]),m:num(x[I.m]),n:num(x[I.n]),alert:x[I.al]==='True',key:x[I.it]+'|'+x[I.k]+'|'+x[I.r],kk:x[I.it]+'|'+x[I.k]}));
+ }catch(e){ST.mon=null;ST.monErr='시세 기록을 불러오지 못했습니다. 잠시 뒤 다시 눌러 주세요.'}
+ ST.monLoading=false;view()}
+const md=d=>Number(d.slice(5,7))+'.'+Number(d.slice(8,10));
+const won=v=>v==null?'-':Math.round(v).toLocaleString('ko-KR');
+const pct=v=>v==null?'<td>-</td>':'<td class="'+(v<0?'neg':'pos')+'">'+(v>0?'+':'')+v.toFixed(1)+'%</td>';
+function monScope(){const all=ST.mon,dates=[...new Set(all.map(r=>r.d))].sort(),last=dates[dates.length-1];let from='0000';
+ if(ST.mp!=='all'){const t=new Date(last+'T00:00:00Z');t.setUTCDate(t.getUTCDate()-Number(ST.mp)+1);from=t.toISOString().slice(0,10)}
+ const ds=dates.filter(d=>d>=from),rows=all.filter(r=>r.d>=from&&(ST.monItem==='all'||r.item===ST.monItem));
+ const miss=[];if(ds.length){const t=new Date(ds[0]+'T00:00:00Z'),e=new Date(last+'T00:00:00Z');for(;t<=e;t.setUTCDate(t.getUTCDate()+1)){const s=t.toISOString().slice(0,10),w=t.getUTCDay();if(w!==0&&w!==6&&!ds.includes(s))miss.push(s)}}
+ const by={};rows.forEach(r=>{(by[r.key]=by[r.key]||[]).push(r)});
+ const sum=Object.keys(by).map(k=>{const a=by[k].sort((x,y)=>x.d<y.d?-1:1),l=a[a.length-1],m=Object.fromEntries(a.map(r=>[r.d,r]));let streak=0;for(let i=ds.length-1;i>=0;i--){const r=m[ds[i]];if(r&&r.alert)streak++;else break}
+  return{key:k,kk:l.kk,item:l.item,kind:l.kind,rank:l.rank,unit:l.unit,last:l,days:a.length,alerts:a.filter(r=>r.alert).length,streak:streak,map:m}})
+  .sort((a,b)=>b.alerts-a.alerts||b.streak-a.streak||(a.last.n==null?99:a.last.n)-(b.last.n==null?99:b.last.n)||a.key.localeCompare(b.key,'ko'));
+ return{dates:ds,last:last,first:dates[0],total:dates.length,miss:miss,sum:sum}}
+function monChart(sc,kk){const ser=sc.sum.filter(s=>s.kk===kk).sort((a,b)=>RANKS.indexOf(a.rank)-RANKS.indexOf(b.rank));if(!ser.length)return'';
+ const ds=sc.dates,W=860,H=300,L=64,R=86,T=16,B=34,t0=Date.parse(ds[0]),t1=Date.parse(ds[ds.length-1]),span=Math.max(t1-t0,1);
+ const vals=ser.flatMap(s=>ds.map(d=>s.map[d]&&s.map[d].price).filter(v=>v!=null));let lo=Math.min(...vals),hi=Math.max(...vals);const pad=(hi-lo||hi*0.1||1)*0.12;lo=Math.max(0,lo-pad);hi=hi+pad;
+ const x=d=>ds.length<2?L+(W-L-R)/2:L+(Date.parse(d)-t0)/span*(W-L-R),y=v=>T+(1-(v-lo)/(hi-lo))*(H-T-B);
+ let g='';for(let i=0;i<=4;i++){const v=lo+(hi-lo)*i/4,yy=y(v);g+='<line x1="'+L+'" x2="'+(W-R)+'" y1="'+yy+'" y2="'+yy+'" stroke="#e6e9e3" stroke-width="1"/><text x="'+(L-8)+'" y="'+(yy+4)+'" text-anchor="end" font-size="11" fill="#647168">'+won(v)+'</text>'}
+ const step=Math.max(1,Math.ceil(ds.length/7));ds.forEach((d,i)=>{if(i%step===0||i===ds.length-1&&(ds.length-1)%step>step/2)g+='<text x="'+x(d)+'" y="'+(H-12)+'" text-anchor="middle" font-size="11" fill="#647168">'+md(d)+'</text>'});
+ ser.forEach((s,si)=>{const c=SER[si%SER.length],pts=ds.filter(d=>s.map[d]&&s.map[d].price!=null);
+  g+='<polyline fill="none" stroke="'+c+'" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" points="'+pts.map(d=>x(d).toFixed(1)+','+y(s.map[d].price).toFixed(1)).join(' ')+'"/>';
+  pts.forEach(d=>{const r=s.map[d];g+=r.alert?'<circle cx="'+x(d)+'" cy="'+y(r.price)+'" r="5" fill="#fff" stroke="#d03b3b" stroke-width="2"/>':(pts.length<25?'<circle cx="'+x(d)+'" cy="'+y(r.price)+'" r="2.5" fill="'+c+'"/>':'')});
+  const ld=pts[pts.length-1];if(ld)g+='<text x="'+(x(ld)+10)+'" y="'+(y(s.map[ld].price)+4)+'" font-size="12" fill="#14231b">'+esc(s.rank)+'</text>'});
+ g+='<line id="mx" y1="'+T+'" y2="'+(H-B)+'" stroke="#14231b" stroke-width="1" stroke-dasharray="3 3" visibility="hidden"/><rect id="mhit" x="'+L+'" y="'+T+'" width="'+(W-L-R)+'" height="'+(H-T-B)+'" fill="transparent"/>';
+ window.__mc={ds:ds,ser:ser,x:x,W:W};
+ const name=ser[0].item+' '+ser[0].kind;
+ return'<div class="card" id="mchart"><h2>'+esc(name)+' 도매가</h2><p class="count">'+md(ds[0])+' ~ '+md(ds[ds.length-1])+' · 단위 원 / '+esc(ser[0].unit)+' · 서울 도매가</p><div class="legend">'+ser.map((s,i)=>'<span><i class="ln" style="background:'+SER[i%SER.length]+'"></i>'+esc(s.rank)+'</span>').join('')+'<span><i class="ring"></i>알림 뜬 날</span></div><div class="chart"><svg viewBox="0 0 '+W+' '+H+'" role="img" aria-label="'+esc(name)+' 도매가 추이">'+g+'</svg></div>'
+ +'<details><summary class="count">숫자로 보기</summary><div class="wrap"><table><thead><tr><th>날짜</th>'+ser.map(s=>'<th>'+esc(s.rank)+'</th><th>평년 대비</th>').join('')+'</tr></thead><tbody>'+ds.slice().reverse().map(d=>'<tr><td class="num">'+md(d)+'</td>'+ser.map(s=>{const r=s.map[d];return r?'<td class="num">'+won(r.price)+(r.alert?' <span class="badge">알림</span>':'')+'</td>'+pct(r.n):'<td>-</td><td>-</td>'}).join('')+'</tr>').join('')+'</tbody></table></div></details></div>'}
+function vMonitor(){
+ if(ST.monLoading)return'<p class="empty">시세 기록을 불러오는 중입니다.</p>';
+ if(ST.monErr)return'<div class="card"><p class="err">'+esc(ST.monErr)+'</p><div class="row"><button class="btn" data-a="monReload">다시 불러오기</button></div></div>';
+ if(!ST.mon)return'<p class="empty">시세 기록을 불러오는 중입니다.</p>';
+ const sc=monScope(),items=[...new Set(ST.mon.map(r=>r.item))].sort((a,b)=>a.localeCompare(b,'ko')),P=[['14','2주'],['30','1개월'],['90','3개월'],['all','전체']];
+ const list=sc.sum.filter(s=>!ST.monAlert||s.alerts>0),alertNow=sc.sum.filter(s=>s.last.d===sc.last&&s.last.alert).length;
+ let h='<div class="stats"><div><b>'+md(sc.last)+'</b><span>마지막 수집일</span></div><div><b>'+alertNow+'</b><span>마지막 수집일 알림</span></div><div><b>'+sc.sum.filter(s=>s.alerts>0).length+'</b><span>기간 안에 알림 뜬 품목</span></div><div><b>'+sc.dates.length+'일</b><span>기간 안 수집일 (전체 '+sc.total+'일)</span></div></div>';
+ h+='<div class="card"><div class="tools"><div class="seg" role="group" aria-label="기간">'+P.map(p=>'<button data-a="mp" data-id="'+p[0]+'" aria-pressed="'+(ST.mp===p[0])+'">'+p[1]+'</button>').join('')+'</div><select id="monItem" aria-label="품목"><option value="all">전체 품목</option>'+items.map(i=>'<option'+(ST.monItem===i?' selected':'')+'>'+esc(i)+'</option>').join('')+'</select><label class="chk"><input type="checkbox" id="monAlert"'+(ST.monAlert?' checked':'')+'>알림 뜬 품목만</label><span style="flex:1"></span><button class="btn line" data-a="monReload">새로 고침</button></div>';
+ h+='<p class="count">알림 기준: 1개월 대비 -20% 이하, 1주 대비 -12% 이하, 평년 대비 -15% 이하 중 하나 이상. 줄을 누르면 아래에 가격 그래프가 나옵니다.</p>';
+ h+=list.length?'<div class="wrap"><table><thead><tr><th>품목</th><th>품종</th><th>등급</th><th>최근 도매가</th><th>평년 대비</th><th>1개월 대비</th><th>1주 대비</th><th>알림 일수</th><th>연속 알림</th></tr></thead><tbody>'+list.map(s=>'<tr class="pick'+(ST.monPick===s.kk?' on':'')+'" data-a="monPick" data-id="'+esc(s.kk)+'"><td><b>'+esc(s.item)+'</b></td><td>'+esc(s.kind)+'</td><td>'+esc(s.rank)+'</td><td class="num">'+won(s.last.price)+'원</td>'+pct(s.last.n)+pct(s.last.m)+pct(s.last.w)+'<td class="num">'+(s.alerts?'<span class="badge">'+s.alerts+'일</span>':'0일')+' / '+s.days+'일</td><td class="num">'+(s.streak?s.streak+'일째':'-')+'</td></tr>').join('')+'</tbody></table></div>':'<p class="empty">이 기간에 알림이 뜬 품목이 없습니다.</p>';
+ h+='</div>';
+ if(ST.monPick)h+=monChart(sc,ST.monPick);
+ const cal=sc.sum.filter(s=>s.alerts>0);
+ h+='<div class="card"><h2>알림 달력</h2><p class="count">기간 안에 알림이 한 번이라도 뜬 품목입니다. 오래 이어진 품목일수록 농가를 찾아볼 만합니다.</p>'+(cal.length?'<div class="legend"><span><i style="background:#d03b3b"></i>알림</span><span><i style="background:#eceee9"></i>알림 없음</span><span><i style="outline:1px dashed #b9c0b6;outline-offset:-1px"></i>그날 기록 없음</span></div><div class="wrap"><table class="cal"><thead><tr><th></th>'+sc.dates.map(d=>'<th>'+md(d)+'</th>').join('')+'</tr></thead><tbody>'+cal.map(s=>'<tr><th>'+esc(s.item+' '+s.kind+' '+s.rank)+'</th>'+sc.dates.map(d=>{const r=s.map[d];return'<td class="'+(r?(r.alert?'a':''):'n')+'" data-tip="'+esc(s.item+' '+s.rank+' · '+md(d)+(r?' · '+won(r.price)+'원'+(r.n!=null?' · 평년 대비 '+(r.n>0?'+':'')+r.n.toFixed(1)+'%':'')+(r.alert?' · 알림':''):' · 기록 없음'))+'"></td>'}).join('')+'</tr>').join('')+'</tbody></table></div>':'<p class="empty">이 기간에 알림이 없습니다.</p>')+'</div>';
+ h+='<div class="note">기록은 '+md(sc.first)+'부터 쌓였습니다. 주말에는 도매가가 나오지 않습니다.'+(sc.miss.length?' 기간 안에 기록이 없는 평일: '+sc.miss.map(md).join(', ')+'.':'')+'</div>';
+ return h}
+const tip=$('#tip');
+document.addEventListener('mousemove',e=>{const c=e.target.closest&&e.target.closest('[data-tip]');
+ if(c){tip.textContent=c.dataset.tip;tip.style.display='block'}
+ else if(e.target.id==='mhit'&&window.__mc){const m=window.__mc,svg=e.target.ownerSVGElement,b=svg.getBoundingClientRect(),px=(e.clientX-b.left)/b.width*m.W;let best=m.ds[0];m.ds.forEach(d=>{if(Math.abs(m.x(d)-px)<Math.abs(m.x(best)-px))best=d});
+  const ln=svg.querySelector('#mx');ln.setAttribute('x1',m.x(best));ln.setAttribute('x2',m.x(best));ln.setAttribute('visibility','visible');
+  tip.innerHTML='<b>'+md(best)+'</b><br>'+m.ser.map(s=>{const r=s.map[best];return esc(s.rank)+' '+(r?won(r.price)+'원'+(r.alert?' · 알림':''):'기록 없음')}).join('<br>');tip.style.display='block'}
+ else{tip.style.display='none';const ln=document.querySelector('#mx');if(ln)ln.setAttribute('visibility','hidden');return}
+ tip.style.left=Math.min(e.clientX+14,window.innerWidth-tip.offsetWidth-8)+'px';tip.style.top=(e.clientY+16)+'px'});
 
 function vMembers(){
  const q=ST.q.trim().toLowerCase(),rows=ST.members.filter(m=>inCx(m,ST.mcx)&&(!q||[m.nickname,m.phone,m.email].some(v=>(v||'').toLowerCase().includes(q.replace(/-/g,''))||(v||'').toLowerCase().includes(q))));
@@ -165,7 +249,7 @@ function vLogs(){return'<div class="card">'+(ST.logs.length?'<div class="wrap"><
 function view(){
  if(!ST.user){app.innerHTML='<div class="center card"><h1>직공 운영</h1><p class="sub">운영자로 등록된 카카오 계정으로 들어옵니다.</p><button class="btn kakao" data-a="login">카카오로 로그인</button></div>';return}
  if(!ST.admin){app.innerHTML='<div class="center card"><h1>운영 권한이 없는 계정입니다</h1><p class="sub">이 계정을 운영자로 등록해야 화면이 열립니다. 아래 값을 등록 담당에게 알려 주세요.</p><p><code>'+esc(ST.user.id)+'</code></p><p class="sub">'+esc(ST.user.email||'')+'</p><button class="btn line" data-a="logout">로그아웃</button></div>';return}
- const V={members:vMembers,complexes:vComplexes,products:vProducts,send:vSend,logs:vLogs};
+ const V={monitor:vMonitor,members:vMembers,complexes:vComplexes,products:vProducts,send:vSend,logs:vLogs};
  app.innerHTML='<div class="shell">'+side()+'<main><h1>'+TITLE[ST.tab][0]+'</h1><p class="sub">'+TITLE[ST.tab][1]+'</p>'+V[ST.tab]()+'</main></div>';
  if(ST.tab==='send')bytes();
 }
@@ -198,7 +282,10 @@ function sure(b,label,ms){if(b.dataset.sure==='1')return true;const o=b.textCont
 const ACT={
  login(){sb.auth.signInWithOAuth({provider:'kakao',options:{redirectTo:location.origin+location.pathname}})},
  logout(){sb.auth.signOut()},
- tab(id){ST.tab=id;ST.edit=null;ST.cxEdit=null;ST.err='';view();window.scrollTo(0,0)},
+ tab(id){ST.tab=id;ST.edit=null;ST.cxEdit=null;ST.err='';view();window.scrollTo(0,0);if(id==='monitor'&&!ST.mon&&!ST.monLoading)loadMonitor()},
+ monReload(){loadMonitor()},
+ mp(id){ST.mp=id;view()},
+ monPick(id){ST.monPick=ST.monPick===id?null:id;view();const c=$('#mchart');if(c)c.scrollIntoView({behavior:'smooth',block:'nearest'})},
  async reload(){await load();view();toast('다시 불러왔습니다')},
  csv(){const rows=[['가입일','이름','휴대폰','단지','이메일','알림 신청','문자 동의']].concat(ST.members.map(m=>[fmtDate(m.created_at),m.nickname||'',fmtPhone(m.phone),cxName(m),m.email||'',prodsOf(m.id).map(pname).join('/'),m.sms_consent?'동의':'미동의']));
   const csv='\ufeff'+rows.map(r=>r.map(v=>{let s=String(v);if(/^[=+\-@]/.test(s))s="'"+s;return'"'+s.replace(/"/g,'""')+'"'}).join(',')).join('\r\n');
@@ -231,6 +318,8 @@ document.addEventListener('submit',e=>{e.preventDefault();if(e.target.id==='pf')
 document.addEventListener('input',e=>{if(e.target.id==='q'){ST.q=e.target.value;view();const i=$('#q');i.focus();i.setSelectionRange(ST.q.length,ST.q.length)}if(e.target.id==='body'){ST.body=e.target.value;bytes()}});
 document.addEventListener('change',e=>{if(e.target.id==='prod'){ST.prod=e.target.value;ST.body='';view()}
  if(e.target.id==='cx'){ST.cx=e.target.value;view()}
+ if(e.target.id==='monItem'){ST.monItem=e.target.value;ST.monPick=null;view()}
+ if(e.target.id==='monAlert'){ST.monAlert=e.target.checked;view()}
  if(e.target.id==='mcx'){ST.mcx=e.target.value;view()}
  if(e.target.id==='ph'&&ST.edit){const f=e.target.files[0];if(!f)return;if(!/^image\/(jpeg|png|webp)$/.test(f.type)){toast('JPG, PNG, WEBP 사진만 올릴 수 있습니다');e.target.value='';return}ST.edit._file=f;ST.edit._pv=URL.createObjectURL(f);$('#pv').src=ST.edit._pv}});
 
