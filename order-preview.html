@@ -26,7 +26,6 @@ h1,h2,h3,p{margin:0}
 .brand img{width:47px;height:47px;border-radius:50%;object-fit:cover}
 .brand span{color:var(--green-900);font-size:25px;font-weight:800;letter-spacing:-.05em}
 .brand small{color:#768078;font-size:12px;font-weight:600;padding-left:10px;border-left:1px solid #cbd2ca}
-.draft{background:var(--sun);color:#4a3200;font-size:12px;font-weight:700;padding:6px 10px;border-radius:5px;white-space:nowrap}
 .gate{min-height:70vh;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center}
 .gate h1{font-size:24px;font-weight:800;letter-spacing:-.03em}
 .gate p{color:var(--muted);font-size:15px}
@@ -92,7 +91,6 @@ label.f input::placeholder,label.f textarea::placeholder{color:#8a938c}
 <body>
 <header class="site-header"><div class="header-inner">
 <a class="brand" href="./" aria-label="직공 홈"><img src="assets/logo.webp" alt=""><span>직공</span><small>직거래 공동구매</small></a>
-<span class="draft" id="draft" hidden>주문 화면 시안</span>
 </div></header>
 
 <main id="gate" class="gate">
@@ -177,7 +175,7 @@ label.f input::placeholder,label.f textarea::placeholder{color:#8a938c}
 /* 운영자만 보는 주문 화면 시안. 주문을 저장하거나 보내지 않습니다. */
 const SB_URL='https://pfzwfxlykhflnfwhvslh.supabase.co',SB_KEY='sb_publishable_JI5ItD5d36j3x7WpTDKWTg_Hf-0JWJs';
 const $=id=>document.getElementById(id);
-function show(ok){$('page').hidden=!ok;$('draft').hidden=!ok;$('gate').hidden=ok}
+function show(ok){$('page').hidden=!ok;$('gate').hidden=ok}
 let lastUid;
 async function check(sess){
  const uid=sess&&sess.user?sess.user.id:null;
