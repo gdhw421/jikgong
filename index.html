@@ -688,7 +688,7 @@ FORM.join=async(d,f)=>{if(AU.busy)return;const ph=(d.phone||'').replace(/[^0-9]/
 /* ---- 사과 상세페이지 (임시: 사이트에 직접 작성. 나중에 운영 화면에서 관리) ---- */
 const AP_IMG=id=>'https://images.unsplash.com/'+id+'?w=1400&q=75&auto=format&fit=crop';
 const _product=V.product;
-V.product=function(id){const p=by(S.products,id);if(id!=='apple'||!p||p.status==='hidden')return _product(id);
+V.product=function(id){const p=by(S.products,id);if(id!=='apple'||!p||p.status==='hidden'){const h=_product(id),k='<dt>나누는 방식</dt><dd>',i=h.indexOf(k);return i<0?h:h.slice(0,i+k.length)+'협의 중'+h.slice(h.indexOf('</dd>',i))}
  const slot=n=>'<li'+(n<=8?'':' class="next"')+'><b>'+n+'</b><span>'+(n<=8?'2.5kg':'다음 세트')+'</span></li>';
  const kv=[['산지','충북 충주'],['품종','부사'],['등급','가정용'],['한 가구 몫','2.5kg'],['세트 구성','20kg 한 상자를 8가구가 나눔'],['가격','공동구매를 열 때 안내'],['일정','금요일 오전 10시 마감, 토요일 문 앞 배달']];
  return'<section><p class="back"><a href="#products">공동구매로 돌아가기</a></p>'
