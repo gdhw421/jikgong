@@ -698,7 +698,6 @@ V.product=function(id){const p=by(S.products,id);if(id!=='apple'||!p||p.status==
  +'<p style="margin-top:24px"><span class="chip">'+esc(ST[p.status]||'곧 오픈')+'</span></p>'
  +'<h1 style="margin-top:10px">충주 사과</h1>'
  +'<p class="ap-lead">부사 · 가정용 · 한 가구 2.5kg</p>'
- +'<p class="prose">충주 산지에서 바로 받은 사과를 여덟 가구가 한 상자씩 나눕니다. 한 가구 몫은 2.5kg이고, 토요일에 문 앞까지 가져다 드려요.</p>'
  +'<dl class="kv" style="margin-top:22px">'+kv.map(x=>'<dt>'+x[0]+'</dt><dd>'+x[1]+'</dd>').join('')+'</dl>'
  +'<button class="btn" disabled aria-disabled="true">공동구매 참여 · 오픈 전</button>'
  +'<button class="btn line" style="margin-top:10px" data-a="alertOn" data-id="apple">오픈 알림 신청</button>'
