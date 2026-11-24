@@ -651,7 +651,9 @@ const SB_URL='https://pfzwfxlykhflnfwhvslh.supabase.co',SB_KEY='sb_publishable_J
 const sb=window.supabase?window.supabase.createClient(SB_URL,SB_KEY,{auth:{flowType:'pkce',detectSessionInUrl:true,persistSession:true}}):null;
 const AU={user:null,profile:null,alerts:[],busy:false};let lastUid;
 const JPL=()=>liveProducts().map(p=>[p.id,p.name]),PCACHE='jg-products',SEEDP=seed().products;
-function jgApplyProducts(rows){S.products=rows.map(r=>({id:r.id,name:r.name,origin:r.origin||'산지 협의 중',variety:r.variety||'',farm:r.grade||'',kg:20,seats:8,price:0,status:r.status,desc:r.description||'',when:r.when_text||'산지 협의 중',store:r.storage||'',monitor:(SEEDP.find(x=>x.id===r.id)||{}).monitor||'',filled:0,maxB:3,photo:r.photo_url||''}))}
+function jgApplyProducts(rows){S.products=rows.map(r=>({id:r.id,name:r.name,origin:r.origin||'산지 협의 중',variety:r.variety||'',farm:r.grade||'',kg:20,seats:8,price:0,status:r.status,desc:r.description||'',when:r.when_text||'산지 협의 중',store:r.storage||'',monitor:(SEEDP.find(x=>x.id===r.id)||{}).monitor||'',filled:0,maxB:3,photo:r.photo_url||(JG_PIC[r.id]?'https://images.unsplash.com/'+JG_PIC[r.id]+'?w=1400&q=75&auto=format&fit=crop':''),stock:!r.photo_url&&!!JG_PIC[r.id]}))}
+const JG_PIC={apple:'photo-1599988288386-29f3a55f22fa',goguma:'photo-1680472628312-9ff2605ee718',dangam:'photo-1576714047433-c5f32378a30b'};
+S.products.forEach(p=>{if(!p.photo&&JG_PIC[p.id]){p.photo='https://images.unsplash.com/'+JG_PIC[p.id]+'?w=1400&q=75&auto=format&fit=crop';p.stock=true}});
 try{const c=JSON.parse(localStorage.getItem(PCACHE)||'null');if(Array.isArray(c))jgApplyProducts(c)}catch(e){}
 let CX=[];try{const c=JSON.parse(localStorage.getItem('jg-complexes')||'null');if(Array.isArray(c))CX=c}catch(e){}
 async function jgComplexes(){const r=await sb.from('complexes').select('id,name').eq('active',true).order('sort').order('name');if(r.error||!r.data)return;CX=r.data;try{localStorage.setItem('jg-complexes',JSON.stringify(CX))}catch(e){}}
@@ -688,11 +690,11 @@ FORM.join=async(d,f)=>{if(AU.busy)return;const ph=(d.phone||'').replace(/[^0-9]/
 /* ---- 사과 상세페이지 (임시: 사이트에 직접 작성. 나중에 운영 화면에서 관리) ---- */
 const AP_IMG=id=>'https://images.unsplash.com/'+id+'?w=1400&q=75&auto=format&fit=crop';
 const _product=V.product;
-V.product=function(id){const p=by(S.products,id);if(id!=='apple'||!p||p.status==='hidden'){const h=_product(id),k='<dt>나누는 방식</dt><dd>',i=h.indexOf(k);return i<0?h:h.slice(0,i+k.length)+'협의 중'+h.slice(h.indexOf('</dd>',i))}
+V.product=function(id){const p=by(S.products,id);if(id!=='apple'||!p||p.status==='hidden'){const h=_product(id),k='<dt>나누는 방식</dt><dd>',i=h.indexOf(k);return i<0?h:h.slice(0,i+k.length)+'협의 중'+h.slice(h.indexOf('</dd>',i)).replace('</section>',p&&p.stock?'<p class="note">사진은 이해를 돕기 위한 참고 이미지입니다. 실제 상품 사진은 공동구매를 열 때 올립니다. (사진: Unsplash)</p></section>':'</section>')}
  const slot=n=>'<li'+(n<=8?'':' class="next"')+'><b>'+n+'</b><span>'+(n<=8?'2.5kg':'다음 세트')+'</span></li>';
  const kv=[['산지','충북 충주'],['품종','부사'],['등급','가정용'],['한 가구 몫','2.5kg'],['세트 구성','20kg 한 상자를 8가구가 나눔'],['가격','공동구매를 열 때 안내'],['일정','금요일 오전 10시 마감, 토요일 문 앞 배달']];
  return'<section><p class="back"><a href="#products">공동구매로 돌아가기</a></p>'
- +'<img class="pd-pic" style="margin-top:18px" src="'+AP_IMG('photo-1745962417587-365bef211257')+'" alt="가지에 달린 붉은 사과">'
+ +'<img class="pd-pic" style="margin-top:18px" src="'+AP_IMG('photo-1599988288386-29f3a55f22fa')+'" alt="종이 봉투에 담긴 사과">'
  +'<p style="margin-top:24px"><span class="chip">'+esc(ST[p.status]||'곧 오픈')+'</span></p>'
  +'<h1 style="margin-top:10px">충주 사과</h1>'
  +'<p class="ap-lead">부사 · 가정용 · 한 가구 2.5kg</p>'
@@ -703,7 +705,7 @@ V.product=function(id){const p=by(S.products,id);if(id!=='apple'||!p||p.status==
  +'<p class="note">아직 주문을 받지 않습니다. 알림을 신청하면 공동구매가 열릴 때 한 번 안내해 드립니다.</p></section>'
  +'<section><h2>집에서 먹기 좋은 가정용 사과</h2>'
  +'<p class="prose">가정용은 선물용처럼 크기와 모양을 고르지 않은 사과입니다. 껍질에 작은 흠이나 색 차이가 있을 수 있지만, 깎아 먹거나 갈아 먹기에는 차이가 없어요. 겉모습 값을 덜어 낸 만큼 부담이 적습니다.</p>'
- +'<div class="ap-two"><img src="'+AP_IMG('photo-1599988288386-29f3a55f22fa')+'" alt="종이 봉투에 담긴 사과" loading="lazy"><img src="'+AP_IMG('photo-1725659254605-ae5024f07ff0')+'" alt="나무에 달린 부사 사과" loading="lazy"></div>'
+ +'<div class="ap-two"><img src="'+AP_IMG('photo-1745962417587-365bef211257')+'" alt="가지에 달린 붉은 사과" loading="lazy"><img src="'+AP_IMG('photo-1725659254605-ae5024f07ff0')+'" alt="나무에 달린 부사 사과" loading="lazy"></div>'
  +'<p class="note">사진은 이해를 돕기 위한 참고 이미지입니다. 실제 상품 사진은 공동구매를 열 때 올립니다. (사진: Unsplash)</p></section>'
  +'<section><h2>여덟 가구가 모이면 한 세트가 성사돼요</h2>'
  +'<p class="prose">사과 20kg 한 상자가 한 세트입니다. 한 가구가 2.5kg씩, 여덟 가구가 모이면 그 세트는 성사되고 산지에서 출발합니다.</p>'
